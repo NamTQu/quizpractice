@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Subject</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+
+    <link rel="stylesheet" th:href="@{/css/course_content/subject_form.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/header.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/footer.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/header_logged_in.css}" />
+</head>
+<body>
+    <!--  HEADER -->
+    <div th:insert="/components/header_logged_in"></div>
+
+    <!--  BODY  -->
+    <section id="body">
+        <h1 style="margin: 10px; font-size: 25px; color: #1368ce; padding: 10px; text-align: center;">ADD NEW SUBJECT</h1>
+        <th:block th:if="${emptyError != null && !emptyError.isEmpty()}">
+            <h2 th:text="${emptyError}" style="color: red; text-align: center;"></h2>
+        </th:block>
+
+        <form th:action="@{/admin/new-subject-submit}" method="post" class="row g-3" id="myForm" enctype="multipart/form-data">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Subject Name</label>
+                <input type="text" class="form-control" id="name" name="name" th:value="${name}" required>
+                <th:block th:if="${ms1 != null && !ms1.isEmpty()}">
+                    <p th:text="${ms1}" style="color: red;"></p>
+                </th:block>
+            </div>
+            <div class="col-md-6">
+                <label for="owner" class="form-label">Owner</label>
+                <select id="owner" class="form-select" name="owner">
+                    <option th:each="expert : ${experts}" th:text="${expert.fullName}" th:value="${expert.id}" th:selected="${selectedOwner != null && selectedOwner.id == expert.id}"></option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" class="form-select" name="category">
+                    <option th:each="category : ${categories}" th:text="${category.getName()}"
+                            th:value="${category.id}" th:selected="${selectedCategory != null && category.id == selectedCategory.id}"></option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="subcategory" class="form-label">Sub-Category</label>
+                <select id="subcategory" class="form-select" name="subcategory">
+                    <th:block th:each="category : ${categories}">
+                        <optgroup th:label="${category.name}">
+                            <option th:each="subcategory : ${category.subCategories}"
+                                    th:value="${subcategory.id}"
+                                    th:text="${subcategory.name}"
+                                    th:selected="${selectedSubcategory != null && subcategory.id == selectedSubcategory.id}">
+                            </option>
+                        </optgroup>
+                    </th:block>
+                </select>
+                <th:block th:if="${ms2 != null && !ms2.isEmpty()}">
+                    <p th:text="${ms2}" style="color: red;"></p>
+                </th:block>
+            </div>
+            <div class="col-md-6">
+                <label for="featured" class="form-label">Featured</label>
+                <select id="featured" class="form-select" name="featured">
+                    <th:block th:each="feature : ${featured}">
+                        <option th:if="${feature}" th:value="${feature}" th:text="Featured" th:selected="${selectedFeatured != null && selectedFeatured.equals('true')}"></option>
+                        <option th:if="${!feature}" th:value="${feature}" th:text="Non-featured" th:selected="${selectedFeatured != null && !selectedFeatured.equals('true')}"></option>
+                    </th:block>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="status" class="form-label">Status</label>
+                <select id="status" class="form-select" name="status">
+                    <th:block th:each="status : ${status}">
+                        <option th:if="${status}" th:value="${status}" th:text="Active" th:selected="${selectedStatus != null && selectedStatus.equals('true')}"></option>
+                        <option th:if="${!status}" th:value="${status}" th:text="Inactive" th:selected="${selectedStatus != null && !selectedStatus.equals('true')}"></option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="thumbnail" class="form-label">Subject Thumbnail</label>
+                <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/png, image/jpeg, image/jpg" required th:value="${thumbnail}">
+            </div>
+            <div class="col-md-6 img-thumbnail">
+                <div id="display_image"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="description" th:text="${description != null && !description.isEmpty() ? description : ''}" required></textarea>
+            </div>
+
+            <div class="buttons" style="display: flex; justify-content: spaced-between">
+                <input id="submit" class="btn btn-primary submit" type="submit" value="Add Subject" onclick="confirmSubmit()">
+                <a href="/admin/subjects-list" class="btn btn-danger cancel">Cancel</a>
+            </div>
+
+        </form>
+
+    </section>
+
+    <!--  FOOTER -->
+    <div th:insert="/components/footer"></div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+            crossorigin="anonymous"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/components/header_logged_in.js}"></script>
+    <script th:src="@{/js/course_content/subject-form.js}"></script>
+</body>
+</html>

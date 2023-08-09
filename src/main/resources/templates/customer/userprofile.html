@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Profile</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" th:href="@{/css/customer/userprofile.css}"/>    
+    </head>
+    <body>
+    <th:block th:if="${userSession == null}">
+        <div th:insert="/components/header"></div>
+    </th:block>
+
+    <th:block th:if="${userSession != null}">
+        <div th:insert="/components/header_logged_in"></div>
+    </th:block>
+    <div class="container" style="margin-top: 70px">
+        <div class="main-body">
+            <div class="row gutters-sm">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center text-center">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Full Name</h6>
+                                </div>
+                                <div th:text="${userSession.fullName}" class="col-sm-9 text-secondary">                      
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div th:text="${userSession.email + '-You cannot change your email!'}" class="col-sm-9 text-secondary">                
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Gender</h6>
+                                </div>
+                                <div th:text="${gender}" class="col-sm-9 text-secondary">                
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Mobile</h6>
+                                </div>
+                                <div th:text="${userSession.mobile}" class="col-sm-9 text-secondary">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0">Address</h6>
+                                </div>
+                                <div th:text="${userSession.address}" class="col-sm-9 text-secondary">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <a class="btn btn-primary btn-block" th:href="@{/home}">Back</a>
+                                </div>
+                                <div class="col-sm-4">
+                                    <a class="btn btn-primary btn-block" th:href="@{/change_password}">Change Password</a>
+                                </div>
+                                <div class="col-sm-4">
+                                    <a class="btn btn-primary btn-block" th:href="@{/edit_profile}">Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>           
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:insert="/components/footer"></div>
+</body>
+</html>

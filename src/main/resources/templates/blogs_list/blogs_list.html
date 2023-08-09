@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IQuiz - Level up IQ Quiz</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+  <link rel="stylesheet" th:href="@{/blogs_list_assets/blogs_list_assets_css/blogs_list_style.css}">
+</head>
+
+<body style="font-size:14px;">
+<!-- ================ HEADER ================ -->
+<!-- <div th:insert="templates/components/header"></div> -->
+
+
+<!-- ================ HEADER ================ -->
+<th:block th:if="${userSession == null}">
+  <div th:insert="/components/header"></div>
+</th:block>
+
+<th:block th:if="${userSession != null}">
+  <div th:insert="/components/header_logged_in"></div>
+</th:block>
+
+
+<!-- ========== MAIN CONTENT ============ -->
+<section class="main">
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- =========== SIDER ============= -->
+      <div class="sider col-md-4 p-5 h-auto">
+        <div class="sider-content">
+          <div class="search-box">
+            <!-- <form th:action="@{/blogs/search}" th:object="" method="get">
+                <input type="text" name="searchTerm" th:value="${searchTerm}">
+                <span>Search For Blogs</span>
+            </form> -->
+            <form action="#" th:action="@{/blog/all/search}" method="get">
+              <input type="text" name="searchTerm" th:value="${searchTerm}">
+              <span>Search For Blogs</span>
+            </form>
+          </div>
+
+          <div class="category">
+            <h3>
+              Blog Categories
+            </h3>
+
+
+            <form th:action="@{/blog/all/filter}" method="get" onsubmit="return validateForm()">
+              <ul>
+                <li style="list-style-type: none">
+                  <input class="checkbox" id="all" type="checkbox" th:name="selectedCategories" th:value="-1">
+                  <label for="all">All</label>
+                </li>
+
+                <li th:each="postCategory : ${postCategories}" style="list-style-type: none">
+                  <th:block th:if="${#strings.arrayIsEmpty(param.selectedCategories)}">
+                    <input class="checkbox" type="checkbox" th:id="${postCategory.getId()}" th:name="selectedCategories" th:value="${postCategory.getId()}" th:if="${#lists.contains(param.selectedCategories, #strings.toString(postCategory.getId()))}" checked>
+                    <input class="checkbox" type="checkbox" th:id="${postCategory.getId()}" th:name="selectedCategories" th:value="${postCategory.getId()}" th:unless="${#lists.contains(param.selectedCategories, #strings.toString(postCategory.getId()))}">
+                  </th:block>
+
+                  <input class="checkbox" type="checkbox" th:id="${postCategory.getId()}" th:name="selectedCategories" th:value="${postCategory.getId()}" th:unless="${#strings.arrayIsEmpty(param.selectedCategories)}">
+                  <label th:text="${postCategory.getName()}" th:for="${postCategory.getId()}"></label>
+                </li>
+              </ul>
+
+              <!-- <label style="display: block;" th:each="postCategory : ${postCategories}">
+                  <input type="checkbox" th:name="selectedCategories" th:value="${category}">
+                  <span th:text="${postCategory.postCategory}"></span>
+                  <br>
+              </label> -->
+
+              <input class="btn btn-primary filter-by-categories" type="submit" value="Filter">
+              <a class="btn btn-danger filter-by-categories" th:href="@{/blog/all}">Clear Filter</a>
+            </form>
+
+
+          </div>
+        </div>
+
+        <div class="latest_posts">
+          <h3>
+            <span><ion-icon name="flame"></ion-icon></span>
+            Lastest Posts
+            <span><ion-icon name="flame"></ion-icon></span>
+          </h3>
+
+          <div th:each="lastestBlog : ${lastestBlogs}" class="latest_posts-cards">
+            <div class="card">
+              <a th:href="@{'/blog-detail?id=' + ${lastestBlog.getId()}}">
+                <img th:src="@{/database_images/{imageName}(imageName=${lastestBlog.getThumbnail()})}"
+                     class="card-img-top" alt="...">
+                <div class="card-body">
+                  <p th:text="${lastestBlog.getTitle()}" class="card-text"></p>
+                </div>
+              </a>
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
+
+
+      <!-- ============= BLOGS LIST ================== -->
+      <div class="blogs-list col-md-8 p-5 h-auto">
+        <th:block th:if="${posts.isEmpty()}">
+          <h1>No Blog Found</h1>
+        </th:block>
+
+        <th:block th:if="${!(posts.isEmpty())}">
+          <div th:each="post : ${posts}">
+            <a th:href="@{'blog-detail?id=' + ${post.getId()}}" style="text-decoration: none;">
+              <div class="card">
+                <img th:src="@{/database_images/{imageName}(imageName=${post.thumbnail})}"
+                     class="card-img-top" alt="...">
+                <div class="card-body">
+                  <div class="text-section">
+                    <h1 th:text="${post.title}" class="card-title"></h1>
+                    <p class="card-text" th:text="'Category: ' + ${post.getCategories().get(0).getName()}"></p>
+                    <p th:text="${post.getBriefInfo()}" class="card-text"></p>
+                  </div>
+                  <div class="cta-section">
+                    <a th:href="@{'blog-detail?id=' + ${post.getId()}}" class="btn btn-primary">View Detail</a>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+          </div>
+        </th:block>
+
+
+
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pagination">
+    <!-- no searching, no filtering pagination -->
+    <th:block th:if="${(searchTerm == null || searchTerm.isEmpty()) && paginationLinks == null}">
+      <ul class="pagination pagination-links">
+        <th:block th:each="pageNumber : ${#numbers.sequence(0, posts.getTotalPages() - 1)}">
+          <li class="page-item">
+            <a class="page-link" th:if="${posts.getTotalPages() <= 5} or ${pageNumber == 0} or ${pageNumber == posts.getTotalPages() - 1} or (${pageNumber >= (page - 1) and pageNumber <= (page + 1)})"
+               th:href="@{?page={page}(page = ${pageNumber + 1})}" th:text="${pageNumber + 1}" th:classappend="${posts.number == pageNumber ? 'active' : ''}">
+            </a>
+          </li>
+
+          <li class="page-item" style="height: 28.45px;">
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and page == 3 and pageNumber == 1}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and page == 4 and pageNumber == 2}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and pageNumber == (page - 2) and page > 4}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and pageNumber == (page + 2) and page < (posts.getTotalPages() - 3)}">...</span>
+          </li>
+        </th:block>
+      </ul>
+    </th:block>
+
+    <th:block th:if="${!searchTerm.isEmpty() && paginationLinks == null}">
+      <ul class="pagination pagination-links">
+        <th:block th:each="pageNumber : ${#numbers.sequence(0, posts.getTotalPages() - 1)}">
+          <li class="page-item">
+            <a class="page-link" th:if="${posts.getTotalPages() <= 5} or ${pageNumber == 0} or ${pageNumber == posts.getTotalPages() - 1} or (${pageNumber >= (page - 1) and pageNumber <= (page + 1)})"
+               th:href="@{?searchTerm={searchTerm}&page={page}(page = ${pageNumber + 1}, searchTerm = ${searchTerm})}" th:text="${pageNumber + 1}" th:classappend="${posts.number == pageNumber ? 'active' : ''}">
+            </a>
+          </li>
+
+          <li class="page-item" style="height: 28.45px;">
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and page == 3 and pageNumber == 1}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and page == 4 and pageNumber == 2}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and pageNumber == (page - 2) and page > 4}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and pageNumber == (page + 2) and page < (posts.getTotalPages() - 3)}">...</span>
+          </li>
+        </th:block>
+      </ul>
+    </th:block>
+
+    <th:block th:if="${paginationLinks != null}">
+      <ul class="pagination pagination-links">
+        <th:block th:each="pageNumber : ${#numbers.sequence(0, posts.getTotalPages() - 1)}">
+          <li class="page-item">
+            <a class="page-link" th:if="${posts.getTotalPages() <= 5} or ${pageNumber == 0} or ${pageNumber == posts.getTotalPages() - 1} or (${pageNumber >= (page - 1) and pageNumber <= (page + 1)})"
+               th:href="@{?selectedCategories={selectedCategories}&page={page}(page = ${pageNumber + 1}, selectedCategories = ${paginationLinks})}" th:text="${pageNumber + 1}" th:classappend="${posts.number == pageNumber ? 'active' : ''}">
+            </a>
+          </li>
+
+          <li class="page-item" style="height: 28.45px;">
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and page == 3 and pageNumber == 1}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and page == 4 and pageNumber == 2}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and pageNumber == (page - 2) and page > 4}">...</span>
+            <span class="page-link" style="height: 28.45px;"
+                  th:if="${posts.getTotalPages() > 5 and pageNumber == (page + 2) and page < (posts.getTotalPages() - 3)}">...</span>
+          </li>
+        </th:block>
+      </ul>
+    </th:block>
+  </div>
+
+</section>
+
+
+<!-- =================== FOOTER =================== -->
+<div th:insert="/components/footer"></div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script type="text/javascript" th:src="@{/blogs_list_assets/blogs_list_assets_js/blogs_list_assets.js}"></script>
+</body>
+
+</html>

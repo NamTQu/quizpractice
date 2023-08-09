@@ -1,0 +1,28 @@
+function showPopup() {
+    document.getElementById("popupForm").style.display = "block";
+}
+  
+function hidePopup() {
+    document.getElementById("popupForm").style.display = "none";
+}
+function change(){
+    document.getElementById("save-button").style.display="block";
+    document.getElementById("change-button").style.display="none";
+    document.getElementById("cancel-button").style.display="block";
+    document.getElementById("inputValue").disabled=false;
+    document.getElementById("inputOrder").disabled=false;
+    document.getElementById("inputStatus").disabled=false;
+    document.getElementById("inputDescription").disabled=false;
+}
+function cancel(){
+    document.getElementById("save-button").style.display="none";
+    document.getElementById("change-button").style.display="block";
+    document.getElementById("cancel-button").style.display="none";
+    document.getElementById("inputValue").disabled=true;
+    document.getElementById("inputOrder").disabled=true;
+    document.getElementById("inputStatus").disabled=true;
+    document.getElementById("inputDescription").disabled=true;
+}
+function backToParents(){
+    window.location.href="/admin/settings";
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head >
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" th:href="@{/css/common/password.css}"/>
+    </head>
+    <body>
+        
+        <th:block th:if="${userSession == null}">
+        <div th:insert="/components/header"></div>
+    </th:block>
+
+    <th:block th:if="${userSession != null}">
+        <div th:insert="/components/header_logged_in"></div>
+    </th:block>
+        
+        <div class="row">
+		<div class="form-group">
+            <h1>TIME OUT</h1>
+		</div>		
+	</div>
+    
+    <div th:insert="/components/footer"></div>
+    
+    </body>
+</html>

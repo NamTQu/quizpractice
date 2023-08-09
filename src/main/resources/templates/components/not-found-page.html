@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found</title>
+    <link rel="stylesheet" href="/js/components/not-found-page.css"/>
+</head>
+<body>
+    <p class="not-found"> page not found </p>
+
+    <div class="tipsiz">
+        <div class="tipsiz-body">
+            <div class="left-arm arm"></div>
+            <div class="face">
+                <div class="upper-face">
+                    <div class="element">4</div>
+                    <div class="element">0</div>
+                    <div class="element">4</div>
+                </div>
+                <div class="mouth"></div>
+            </div>
+            <div class="right-arm arm"></div>
+        </div>
+    </div>
+
+    <p> maybe you want to go <a th:href="@{../../{backUrl}(backUrl = ${backUrl})}">back? </a></p>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Submit Quiz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/common/verify_success.css}" />
+</head>
+<body>
+    <div class="container text-center">
+        <h3>You have answered <span th:text = "${answeredQuestion}"/></span> of 10 question!. Do you want to submit?</h3>
+        <h4><a th:href="@{/quiz-handle(id=${id}, qid=${qid})}">Back to your quiz.</a></h4>
+        <h4><a th:href="@{/quiz_review?qr=true&id={id}&index_question=0(id = ${qvid})}">Yes</a></h4>
+    </div>
+</body>
+</html>

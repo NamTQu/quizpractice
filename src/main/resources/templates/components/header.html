@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <!--	<link rel="stylesheet" href="../../../static/templates_components_assets/css/header.css">-->
+    <link rel="stylesheet" href="/css/components/header.css">
+</head>
+
+<body>
+<header style="font-size:14px;">
+    <div class="navbar1">
+        <div class="logo">
+            <a href="/home">
+                <img style="margin-top: 0;" src="/image/iquizz-text_logo.png" alt="..."/>
+            </a>
+        </div>
+        <div class="navbar__content">
+            <div class="group">
+                <ul class="navigation">
+                    <li>
+                        <a id="home" href="/home">
+                            <span class="navbar-item-icon"><ion-icon name="home"></ion-icon></span>
+                            <span class="navbar-item-text">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="subject" th:href="@{/subjects/subjects-list}">
+                            <span class="navbar-item-icon"><ion-icon name="book"></ion-icon></span>
+                            <span class="navbar-item-text">Subjects</span>
+                        </a>
+                    </li>
+<!--                    <li>-->
+<!--                        <a id="slider" href="/slider/sliders-list">-->
+<!--                            <span class="navbar-item-icon"><ion-icon name="book"></ion-icon></span>-->
+<!--                            <span class="navbar-item-text">Slider</span>-->
+<!--                        </a>-->
+<!--                    </li>-->
+                    <li>
+                        <a id="blog" href="/blog/all">
+                            <span class="navbar-item-icon"><ion-icon name="earth"></ion-icon></span>
+                            <span class="navbar-item-text">Blog</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="action-btn">
+                <a class="login" id="login" href="/login">Login</a>
+                <a href="/register">
+                    <span class="navbar-item-icon"><ion-icon name="person-add"></ion-icon></span>
+                    <span class="navbar-item-text">Register</span>
+                </a>
+            </div>
+        </div>
+        <ion-icon name="menu-outline" class="menuToggle"></ion-icon>
+    </div>
+</header>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>
+
+</html>

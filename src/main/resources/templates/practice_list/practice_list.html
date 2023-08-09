@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Practices List</title>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+
+	<link rel="stylesheet" th:href="@{/css/practice_list/practice_list.css}" />
+	<link rel="stylesheet" th:href="@{/css/components/header.css}" />
+	<link rel="stylesheet" th:href="@{/css/components/footer.css}" />
+	<link rel="stylesheet" th:href="@{/css/components/header_logged_in.css}" />
+</head>
+
+<body>
+	<!--  HEADER -->
+	<div th:insert="/components/header_logged_in"></div>
+
+	<!--  BODY  -->
+	<section id="body">
+		<h1>PRACTICES LIST</h1>
+		<div class="functionalities" style="display: flex; align-items: center; justify-content: space-between;">
+
+<!--			<div class="filter-by-subject">-->
+<!--				<th:block th:if="${selectedSubject == null}">-->
+<!--					<form th:action="@{/filter}" method="get">-->
+<!--						<select id="subjects2" name="subject-id" style="padding: 3px">-->
+<!--							<option value="-1">All Subjects</option>-->
+<!--							<option th:each="subject : ${accessedSubjects}"-->
+<!--									th:value="${subject.getId().getSubject().getId()}"-->
+<!--									th:text="${subject.getId().getSubject().getBriefInfo()}">-->
+<!--							</option>-->
+<!--						</select>-->
+<!--						<input class="btn btn-dark" type="submit" value="Filter By Subject" style="background-color: #484747; padding: 4px">-->
+<!--					</form>-->
+<!--				</th:block>-->
+<!--				<th:block th:unless="${selectedSubject == null}">-->
+<!--					<form th:action="@{/filter}" method="get">-->
+<!--						<select id="subjects" name="subject-id" style="padding: 3px">-->
+<!--							<option value="-1">All Subjects</option>-->
+<!--							<option th:each="subject : ${accessedSubjects}"-->
+<!--									th:value="${subject.getId().getSubject().getId()}"-->
+<!--									th:text="${subject.getId().getSubject().getBriefInfo()}"-->
+<!--									th:selected="${subject.getId().getSubject().getId() == selectedSubject.getId()}">-->
+<!--							</option>-->
+<!--						</select>-->
+<!--						<input class="btn btn-dark" type="submit" value="Filter By Subject" style="background-color: #484747;">-->
+<!--					</form>-->
+<!--				</th:block>-->
+
+
+<!--			</div>-->
+
+			<div class="search-box">
+				<form th:action="@{/user/practice-list/search}" method="get">
+					<input type="text" name="practice-name" th:value="${practiceName}" placeholder="Search By Practice" style="border-radius: 5px; padding: 5px; border: 2px solid #333">
+					<input type="submit" value="Search" class="btn btn-primary" style="background-color: #1C4DA4; width: 50px; height: 33px;">
+				</form>
+			</div>
+			<div class="button">
+				<a class="btn btn-dark" href="/new-practice-detail" style="padding: 5px; font-size: 14px; margin-right: 10px; background-color: #484747;">New Practice</a>
+				<a class="btn btn-primary" href="/user/simulation-exam" style="padding: 5px; font-size: 14px">Simulation Exam</a>
+			</div>
+		</div>
+		<table class="table table-hover table-bordered practice-list-table" style="margin-top: 15px; margin-bottom: 35px">
+			<thead style="background-color: #1368ce; color: white;">
+				<tr>
+					<th scope="col">Practices Taken</th>
+					<th scope="col">Level</th>
+					<th scope="col">Date Taken</th>
+                    <th scope="col">Duration (Time)</th>
+					<th scope="col">Correctness (Questions)</th>
+<!--					<th scope="col">Correctness (%)</th>-->
+                    <th scope="col">View Details</th>
+				</tr>
+			</thead>
+			<tbody  th:each="takenQuizz : ${takenQuizzes}">
+				<tr>
+                    <td>
+						<a th:href="@{/practice-detail?id={id}(id = ${takenQuizz.getId()})}" style="text-align: start">
+							<span th:text="'Practice Name: ' + ${takenQuizz.getLesson().getName()}" style="display: block; font-weight: 500;"></span>
+							<span th:text="'Subject: ' + ${takenQuizz.getLesson().getSubject().getBriefInfo()}" style="display: block; font-size: 12px"></span>
+							<span th:text="'Practice Type: ' + ${takenQuizz.getLesson().getTestType().getName()}" style="display: block; font-size: 12px"></span>
+						</a>
+					</td>
+					<td><a th:text="${takenQuizz.getLesson().getLevel().getName()}" th:href="@{/practice-detail?qr=true&id={id}(id = ${takenQuizz.getId()})}"></a></td>
+                    <td><a th:text="${takenQuizz.getDateTaken()}" th:href="@{/practice-detail?qr=true&id={id}(id = ${takenQuizz.getId()})}"></a></td>
+                    <td><a th:text="${takenQuizz.getDuration()}" th:href="@{/practice-detail?qr=true&id={id}(id = ${takenQuizz.getId()})}"></a></td>
+                    <td><a th:href="@{/practice-detail?qr=true&id={id}(id = ${takenQuizz.getId()})}">
+							<span th:text="${hashmaps[takenQuizz.getId()] + ' Corrects / '}"></span>
+							<span th:text="${takenQuizz.getQuizreviewQuestions().size() + ' Questions'}"></span>
+						</a>
+					</td>
+<!--                    <td>-->
+<!--						<a th:text="${(hashmaps[takenQuizz.getId()] / takenQuizz.getQuizreviewQuestions().size()) + ' %'}"  th:href="@{/practice-detail?qr=true&id={id}(id = ${takenQuizz.getId()})}"></a>-->
+<!--					</td>-->
+                    <td><a th:href="@{/practice/detail?qr=true&id={id}(id = ${takenQuizz.getId()})}" class="view-detail">View Details</a></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<th:block th:if="${!takenQuizzes.isEmpty()}">
+			<div class="pagination" >
+				<!-- no searching, no filtering pagination -->
+				<ul class="pagination pagination-links">
+					<th:block th:each="pageNumber : ${#numbers.sequence(0, takenQuizzes.getTotalPages() - 1)}">
+						<li class="page-item">
+							<a class="page-link" th:if="${takenQuizzes.getTotalPages() <= 5} or ${pageNumber == 0} or ${pageNumber == takenQuizzes.getTotalPages() - 1} or (${pageNumber >= (page - 1) and pageNumber <= (page + 1)})"
+							   th:href="@{?page={page}(page = ${pageNumber})}" th:text="${pageNumber + 1}" th:classappend="${takenQuizzes.number == pageNumber ? 'active' : ''}">
+							</a>
+						</li>
+
+						<li class="page-item" style="height: 28.45px;">
+						<span class="page-link" style="height: 28.45px;"
+							  th:if="${takenQuizzes.getTotalPages() > 5 and page == 3 and pageNumber == 1}">...</span>
+							<span class="page-link" style="height: 28.45px;"
+								  th:if="${takenQuizzes.getTotalPages() > 5 and page == 4 and pageNumber == 2}">...</span>
+							<span class="page-link" style="height: 28.45px;"
+								  th:if="${takenQuizzes.getTotalPages() > 5 and pageNumber == (page - 2) and page > 4}">...</span>
+							<span class="page-link" style="height: 28.45px;"
+								  th:if="${takenQuizzes.getTotalPages() > 5 and pageNumber == (page + 2) and page < (takenQuizzes.getTotalPages() - 3)}">...</span>
+						</li>
+					</th:block>
+				</ul>
+			</div>
+		</th:block>
+
+	</section>
+
+	<!--  FOOTER -->
+	<div th:insert="/components/footer"></div>
+
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js"
+		integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+		crossorigin="anonymous"></script>
+	<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+	<script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+</html>

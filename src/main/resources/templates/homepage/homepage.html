@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IQuiz - Level up IQ Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+
+    <link rel="stylesheet" th:href="@{/homepage_assets/homepage_assets_css/homepage.css}">
+    <link rel="stylesheet" th:href="@{/css/components/header.css}">
+    <link rel="stylesheet" th:href="@{/css/components/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/components/header_logged_in.css}">
+</head>
+
+<body>
+<!-- ================ HEADER ================ -->
+<th:block th:if="${userSession == null}">
+    <div th:insert="/components/header"></div>
+</th:block>
+
+<th:block th:if="${userSession != null}">
+    <div th:insert="/components/header_logged_in"></div>
+</th:block>
+
+
+
+
+<!-- ================ SLIDER ================== -->
+<section class="slider">
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+            <div th:each="slider : ${sliders}" class="carousel-item active">
+                <a th:href="${slider.backLink}">
+                    <div class="img-wrapper">
+                        <img th:src="@{/database_images/{imageName}(imageName=${slider.image})}"
+                             class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3 style="font-size: 20px;" th:text="${slider.title}"></h3>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+
+
+<!-- ============================ MAIN PART ======================= -->
+<section class="main">
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- ================== SIDER - LASTEST POSTS ================== -->
+            <div class="sider col-md-3 h-auto" style="padding: 10px 0 35px 40px;">
+                <div class="lastest_posts" style="position: sticky; top: 70px;">
+                    <h2>
+                        <span><ion-icon name="flame"></ion-icon></span>
+                        Lastest Posts
+                        <span><ion-icon name="flame"></ion-icon></span>
+                    </h2>
+
+                    <div th:each="latestBlog : ${latestBlogs}" class="latest_posts-cards">
+
+                        <div class="card">
+                            <a th:href="@{'/blog-detail?id=' + ${latestBlog.id}}">
+                                <img th:src="@{/database_images/{imageName}(imageName=${latestBlog.thumbnail})}"
+                                     class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <p th:text="${latestBlog.title}" class="card-text"></p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ================== MAIN CONTENT ================== -->
+            <div class="main-content p-5 col-md-9">
+
+                <!-- HOT POSTS -->
+                <div class="blogs-list" style="margin-bottom: 1rem;">
+
+                    <div class="section-title">
+                        <h1>
+                            <span id="heart"><ion-icon name="heart-circle"></ion-icon></span>
+                            Hot Posts
+                        </h1>
+                        <h3><a href="/blog/all">View all</a></h3>
+                    </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-3 blogs-list__content" th:each="blog : ${blogs}">
+                                <div class="card" style="width: 23rem; margin-bottom: 1rem; margin-right: 1.5rem;">
+                                    <a th:href="@{'/blog/blog-detail?id=' + ${blog.id}}">
+                                        <div class="img-wrapper" style="height:180px">
+                                            <img th:src="@{/database_images/{imageName}(imageName=${blog.thumbnail})}"
+                                                 class="card-img-top" alt="...">
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 th:text="${blog.title}" class="card-title"></h3>
+                                            <p th:text="'Author: ' + ${blog.getAuthor().getFullName()}" class="updated-date"></p>
+                                            <p th:text="'Last Updated: ' + ${blog.lastUpdated}" class="updated-date"></p>
+                                            <a id="post_detail_btn"
+                                               th:href="@{'/blog/blog-detail?id=' + ${blog.id}}"
+                                               class="btn btn-success">View Detail</a>
+                                        </div>
+                                    </a>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <!-- FEATURED SUBJECTS -->
+                <div class="subjects-list" style="margin-bottom: 0;">
+
+                    <div class="section-title">
+                        <h1>
+                            <span><ion-icon name="school"></ion-icon></span>
+                            Featured Subjects
+                        </h1>
+                        <h3><a style="color: #1C4DA4;" href="subjects/subjects-list">View all</a></h3>
+                    </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-3 subjects-list__content"
+                                 th:each="featuredSubject : ${featuredSubjects}">
+                                <div class="card" style="width: 23rem; margin-bottom: 1rem; margin-right: 1.5rem;">
+                                    <a th:href="@{'/subjects/subject-detail?subjectId=' + ${featuredSubject.id}}">
+                                        <div class="img-wrapper" style="height:180px">
+                                            <img th:src="@{/database_images/{imageName}(imageName=${featuredSubject.thumbnail})}"
+                                                 class="card-img-top" alt="...">
+                                        </div>
+                                        <div class="card-body">
+                                            <h3 th:text="${featuredSubject.briefInfo}" class="card-title"></h3>
+                                            <p class="updated-date" style="color: #1C4DA4" th:text="'#' + ${featuredSubject.getTagLine()}"></p>
+                                            <a id="subject_detail_btn"
+                                               th:href="@{'subjects/subject-detail?id=' + ${featuredSubject.id}}" class="btn btn-primary">Study Now</a>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =================== FOOTER =================== -->
+<div th:insert="/components/footer"></div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script type="text/javascript" th:src="@{js/components/header_logged_in.js}"></script>
+<script type="text/javascript" th:src="@{/homepage_assets/homepage_assets_js/main.js}"></script>
+
+</body>
+
+</html>

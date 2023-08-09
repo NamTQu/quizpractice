@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Question List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/components/header.css}">
+    <link rel="stylesheet" th:href="@{/css/components/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/components/header_logged_in.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <style>
+        /* Styles for the popup container */
+        .popup-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Styles for the popup box */
+        .popup-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Styles for the file input and button */
+        .file-input-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+
+    </style>
+</head>
+<body>
+  
+<th:block th:if="${userSession == null}">
+    <div th:insert="/components/header" class="row"></div>
+</th:block>
+
+<th:block th:if="${userSession != null}">
+    <div th:insert="/components/header_logged_in" class="row"></div>
+</th:block>
+
+<h1 style="text-align: center">Question List</h1>
+<div class="row" style="margin-top: 50px;margin-bottom: 50px">
+    
+    <form action="/testingcontent/questionList" class="row">
+        <div class="col">
+            <select class="form-select" name="lessonID" onchange="this.form.submit()">
+                <option value="-1" selected>All lesson Group</option>
+                <option th:each="item:${lessonList}" th:value="${item.id}" th:text="${item.name}"
+                        th:selected="${item.id == lessonID}"></option>
+            </select>
+        </div>
+        <div class="col">
+            <select class="form-select" name="status" onchange="this.form.submit()">
+                <option value="0" selected>All status</option>
+                <option value="1" th:selected="${status == 1}">Active</option>
+                <option value="2" th:selected="${status == 2}">Deactive</option>
+            </select>
+        </div>
+        <div class="col">
+            <select class="form-select" name="level" onchange="this.form.submit()">
+                <option value="-1" selected>All Level</option>
+                <option th:each="item:${levelList}" th:value="${item.id}" th:text="${item.name}"
+                        th:selected="${item.id == level}"></option>
+            </select>
+        </div>
+        <div class="col">
+            <select class="form-select" name="dimensionID" onchange="this.form.submit()">
+                <option value="-1" selected>All Dimension</option>
+                <option th:each="item:${dimensionList}" th:value="${item.id}" th:text="${item.name}"
+                        th:selected="${item.id == dimensionID}"></option>
+            </select>
+        </div>
+        <div class="col">
+            <div class="input-group">
+            <input th:value="${search}" name="search" type="text" class="form-control"
+                   placeholder="Search..." aria-label="Type lesson name to search"
+                   aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-secondary" type="submit">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+            </div>
+        </div>
+    </form>
+    <div class="col-12">
+        <button onclick="showPopup()">Open CSV File</button>
+        <a th:href="@{/testingcontent/download/template.xlsx}">Download Template</a>
+
+        <div class="popup-container" id="popup" style="z-index: 9999">
+            <div class="popup-box">
+                <h3>Select a CSV file to open:</h3>
+                <div class="file-input-container">
+                    <form action="/testingcontent/import-data" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" class="form-control-file" accept=".xlsx" required/><br>
+                        <button class="btn btn-secondary">Submit</button>
+                    </form>
+                </div>
+                <button onclick="hidePopup()">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Content</th>
+                <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item:${listPaging}">
+                <td scope="row" th:text="${item.id}"></td>
+                <td th:text="${item.content}"></td>
+                <td th:text="${item.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <div th:if="${listPaging.getTotalPages() > 0}"
+                 th:each="pageNumber : ${pageNumbers}" style="margin-right: 10px">
+                <a th:href="@{/testingcontent/questionList(size=${listPaging.size}, page=${pageNumber},dimensionID=${dimensionID},level=${level},status=${status},lessonID=${lessonID},search=${search})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==listPaging.number + 1} ? active"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:insert="/components/footer"></div>
+
+<script th:if="${type == 'success'}" th:inline="javascript">
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this file!",
+        icon: "success",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            let listJson = JSON.stringify([[${SuccessAddingData}]]);
+            submitListToController(listJson);
+        } else {
+            swal("Your file is safe!");
+        }
+    });
+</script>
+
+<!-- Check for error message and show SweetAlert if present -->
+<script th:if="${type == 'error'}">
+    swal("Invalid File");
+</script>
+
+<!-- Ajax function to call the controller -->
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    function submitListToController(list) {
+        fetch('http://localhost:8080/testingcontent/insert-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.parse(list)
+        }).then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.href = "http://localhost:8080/testingcontent/questionList?importResult=Success";
+                } else {
+                    window.location.href = "http://localhost:8080/testingcontent/questionList?importResult=Error";
+                }
+            })
+            .catch(error => {
+                // Handle other network errors here
+                console.log(error);
+                swal('Error', 'List submission failed!', 'error');
+            });
+    }
+
+    /*]]>*/
+</script>
+
+<script>
+    window.onload = function() {
+        // Get the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Access individual parameters
+        const status = urlParams.get("importResult");
+
+        if(status.trim().toLowerCase() === 'success'){
+            swal('Congratulation!', 'List submission success!', 'success');
+        }else{
+            swal('Error', 'List submission failed!');
+        }
+
+    };
+
+    function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+    }
+
+    function hidePopup() {
+        document.getElementById('popup').style.display = 'none';
+    }
+</script>
+</body>
+</html>

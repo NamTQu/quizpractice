@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>IQuiz - Level up IQ Quiz</title>
+        <link rel="stylesheet" href="/css/public/subjects_list.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="/js/public/subjects_list.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> 
+    </head>
+    <body style="font-size:15px">
+        <!-- ================ HEADER ================ -->
+        <th:block th:if="${userSession == null}">
+            <div th:insert="/components/header"></div>
+        </th:block>
+
+        <th:block th:if="${userSession != null}">
+            <div th:insert="/components/header_logged_in"></div>
+        </th:block>
+        <!-- ========== MAIN CONTENT ============ -->
+        <main>
+            <div class="container">
+                <div class="row">
+                    <!-- =========== SIDER ============= -->
+                    <div class="col-lg-4">
+                        <div id="sidebar">
+                            <form method="get" action="/subjects/subjects-list">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <input type="search" name="search" placeholder="Search for subject" id="search" class="form-control search-box" style="width: 100%" />
+                                    <button class="btn btn-primary" type="submit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </form>
+                            <span th:each="category:${categories}">
+                                <div class="category-button" th:value="${category.id}" th:text="${category.name}" th:attr="onclick=|showSubcategories(${category.id})|" style="font-weight: bold;"></div>
+                                <div>
+                                    <span th:each="subcategory:${category.subCategories}" style="display: block; margin-bottom: 5px;">
+                                        <input class="subcategory" type="checkbox" th:value="${subcategory.id}" onchange="navigateToInteract()">
+                                        <label th:text="${subcategory.name}"></label>
+                                    </span>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- ============= SUBJECT DETAILS ================== -->
+                    <div class="col-lg-8">
+                        <div class="subject-content rounded bg-white mt-2">
+                            <article>
+                                <div th:each="subject : ${subject}">
+                                    <div class="subject_title">
+                                        <h1 class="text-center" th:text="${subject.title}"></h1>
+                                    </div>
+                                    <img class="image" th:src="@{/database_images/{imageName}(imageName=${subject.thumbnail})}"/>
+                                    <h3>Category:</h3>
+                                    <div th:text="${subject.subCategories.get(0).category.name}" class="subject-content"></div>
+                                    <h3>Subject's information:</h3>
+                                    <div th:text="${subject.briefInfo}" class="subject-content"></div>
+                                    <h3>Subject's description:</h3>
+                                    <div th:text="${subject.description}" class="subject-content"></div>
+                                    <h3>Teacher:</h3>
+                                    <div th:text="${subject.owner.fullName}" class="subject-content"></div>
+                                </div>
+                            </article>
+                            <div class="mt-5 p-4">
+                                <button class="btn btn-outline-dark" onclick="history.back()">Back</button>
+                                <a th:attr="onclick=|register(${subject.id})|"><button class="btn btn-outline-danger" type="button">Register</button></a>
+                            </div>
+                            <div th:id="'popupForm_'+${subject.id}" class="modal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Register</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" action="/subject-register">
+                                            <div class="row gx-3 mb-3">
+                                                <label class="small mb-1" for="inputEmail">Email*</label>
+                                                <th:block th:if="${userSession == null}">
+                                                    <input class="form-control" name="email" id="inputEmail" type="email">
+                                                </th:block>
+                                                <th:block th:if="${userSession != null}">
+                                                    <input class="form-control" name="email" id="inputEmail" type="email" th:value="${userSession.email}" th:text="${userSession.email}" readonly>
+                                                </th:block>
+                                            </div>
+                                            <div class="row gx-3 mb-3">
+                                                <div class="col-md-6">
+                                                    <div th:text="${subject.title}"></div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="small mb-1" th:for="'inputPricePackage_'+${subject.id}">Price package</label>
+                                                    <select th:id="'inputPricePackage_'+${subject.id}" name="pricePackage">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="small mb-1" for="inputNote">Notes</label>
+                                                <input class="form-control" name="notes" id="inputNote" type="text">
+                                            </div>
+                                            <input type="hidden" name="subjectId" value="${subject.id}">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button class="btn btn-primary" id="save-button" type="submit">Register</button>
+                                                </div>
+                                                <div class="col">
+                                                    <button class="btn btn-primary" id="cancel-button" type="button" th:attr="onclick=|hidePopup(${subject.id})|">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- =================== FOOTER =================== -->
+        <div th:insert="/components/footer"></div>
+    </body>
+</html>

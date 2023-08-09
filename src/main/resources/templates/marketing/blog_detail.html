@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IQuiz - Level up IQ Quiz</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+
+  <link rel="stylesheet" th:href=@{/css/marketing/blog_edit.css}>
+
+</head>
+
+<body style="font-size:15px;font-weight:bold;">
+<!-- ================ HEADER ================ -->
+<th:block th:if="${userSession == null}">
+  <div th:insert="components/header"></div>
+</th:block>
+
+<th:block th:if="${userSession != null}">
+  <div th:insert="components/header_logged_in"></div>
+</th:block>
+<!-- ========== MAIN CONTENT ============ -->
+<div class="container rounded bg-white mt-5 mb-5" >
+  <form action="update-blog" method="blog" enctype="multipart/form-data">
+    <div class="row" style="margin-top: 8%;">
+      <div class="blog_edit p-4">
+
+        <h1 class="text-center">[[${pageTitle}]]</h1>
+      </div>
+      <!--            <div th:each="blog : ${blog}">-->
+      <div class="col-md-8">
+        <div class="p-3 py-5">
+          <div class="col-md-12">Title<input type="text" class="form-control"  name="title" th:value="${blog.title}" readonly></div>
+          <div class="col-md-12">Brief Information<textarea class="form-control" name="brief_info" rows="2" th:text="${blog.briefInfo}" readonly></textarea></div>
+          <div class="col-md-12">Content<textarea class="form-control" rows="15" id="editor" name="content" th:text="${blog.content}" readonly></textarea></div>
+        </div>
+      </div>
+      <!--            </div>-->
+      <div class="col-md-4">
+        <div class="p-3 py-5">
+          <div class="row mt-16">
+            <div class="col-md-12">Update date<input type="date" class="form-control" th:value="${blog.lastUpdated}"  readonly=""></div>
+            <div class="col-md-12">Status
+              <c:if th:if="${blog.status == true}">
+                <input type="status" class="form-control" th:value="Show"  readonly="">
+              </c:if>
+              <c:if th:if="${blog.status != true}">
+                <input type="status" class="form-control" th:value="Hide"  readonly="">
+              </c:if>
+            </div>
+            <div class="col-md-12">Thumbnail</div>
+            <img class="mt-3"  th:src="@{/database_images/{imageName}(imageName=${blog.thumbnail})}"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 p-4 text-center">
+        <a th:href="@{/marketing/blog/blogs-list}"><button class="btn btn-outline-dark" type="button">Back</button></a>
+        <a th:href="@{'/marketing/blog/blog-detail-edit?id=' + ${blog.id}}"><button class="btn btn-outline-danger" type="button">Edit</button></a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- =================== FOOTER =================== -->
+<div th:insert="components/footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script type="text/javascript" th:src="@{/blogs_list_assets/blog_list_assets_js/blogs_list_assets.js}"></script>
+</body>
+
+</html>

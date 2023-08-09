@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" th:href="@{/css/customer/quizreview.css}">
+        <link rel="stylesheet" href="/css/customer/quizreview.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+        <title>Document</title>
+    </head>
+    <body>
+
+    <th:block th:if="${userSession == null}">
+        <div th:insert="/components/header"></div>
+    </th:block>
+
+    <th:block th:if="${userSession != null}">
+        <div th:insert="/components/header_logged_in"></div>
+    </th:block>
+
+    <div class="button_review">
+        <button th:if="${back == 1}" class="button button1" id="prevButton">Previous</button>
+        <button th:if="${back == 0}" class="button button1" id="prevButton" style="display:none">Previous</button>
+
+        <a th:href="@{/quiz_review_result?id={id}&index_question=0(id=${id})}"> <button onclick="openPopup()" class="button button1">Result Progress</button> </a>
+
+        <button th:if="${next == 1}" class="button button1" id="nextButton">Next</button>                  
+        <button th:if="${next == 0}" class="button button1" id="nextButton" style="display:none">Next</button>        
+    </div>
+    <div class="review_information">
+        <div class="question">
+            <p> ID Question:  <span th:text="${all.getId()}"></span> </p>
+            <p> Question: <span th:text="${all.getContent()}"></span> </p>
+        </div>
+        <div class="answer">
+            <div th:each="item: ${answer}">
+                <div th:if="${item.getChecking() == 'true'}" class="answer-box1">
+                    <p th:text="${item.getExplanation()}"></p>
+                </div>
+                <div th:if="${item.getChecking() != 'true'} and ${item.getExplanation() == all.getChecking()}" class="answer-box2">                 
+                        <p th:text="${item.getExplanation()}"></p>           
+                </div>
+                <div th:if="${item.getChecking() != 'true'} and ${item.getExplanation() != all.getChecking()}" class="answer-box">
+                    <p th:text="${item.getExplanation()}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="back_button">
+        <a th:href="@{/user/practice-list}"> <button class="button button1">Đóng</button> </a>
+    </div>
+    <script>
+
+
+
+        // Get the next button element
+        var nextButton = document.getElementById("nextButton");
+
+        // Add a click event listener to the next button
+        nextButton.addEventListener("click", function () {
+            // Get the current URL
+            var url = window.location.href;
+
+            // Create a URL object
+            var urlObj = new URL(url);
+
+            // Get the current value of the "index_question" parameter
+            var indexQuestionParam = urlObj.searchParams.get("index_question");
+
+            // Increment the value of "index_question" by 1
+            var newIndexQuestion = parseInt(indexQuestionParam) + 1;
+
+            // Update the URL with the new "index_question" value
+            urlObj.searchParams.set("index_question", newIndexQuestion);
+
+            // Navigate to the updated URL
+            window.location.href = urlObj.href;
+        });
+
+        // Get the previous button element
+        var prevButton = document.getElementById("prevButton");
+
+
+        // Add a click event listener to the previous button
+        prevButton.addEventListener("click", function () {
+            // Get the current URL
+            var Backurl = window.location.href;
+
+            // Create a URL object
+            var BackurlObj = new URL(Backurl);
+
+            // Get the current value of the "index_question" parameter
+            var BackindexQuestionParam = BackurlObj.searchParams.get("index_question");
+
+
+            // Decrement the value of "index_question" by 1
+            var BacknewIndexQuestion = parseInt(BackindexQuestionParam) - 1;
+
+            // Update the URL with the new "index_question" value
+            BackurlObj.searchParams.set("index_question", BacknewIndexQuestion);
+
+            // Navigate to the updated URL
+            window.location.href = BackurlObj.href;
+        });
+
+        function openPopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "flex";
+        }
+
+        function closePopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "none";
+        }
+    </script>
+
+    <div th:insert="/components/footer"></div>
+
+</body>
+</html>
+

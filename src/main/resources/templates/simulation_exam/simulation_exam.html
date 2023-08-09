@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Practices List</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+
+    <link rel="stylesheet" th:href="@{/css/simulation_exam/simulation_exam.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/header.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/footer.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/header_logged_in.css}" />
+</head>
+
+<body>
+    <!--  HEADER -->
+    <div th:insert="/components/header_logged_in"></div>
+
+
+    <!--  BODY  -->
+    <section id="body">
+        <h1>SIMULATION-EXAMS LIST</h1>
+        <div class="functionalities" style="display: flex; align-items: center; justify-content: space-between;">
+
+            <div class="filter-by-subject">
+                <th:block th:if="${selectedSubject == null}">
+                    <form th:action="@{/user/simulation-exam/filter}" method="get">
+                        <select id="subjects2" name="subject-id" style="padding: 3px">
+                            <option value="-1">All Subjects</option>
+                            <option th:each="subject : ${accessedSubjects}"
+                                    th:value="${subject.getSubject().getId()}"
+                                    th:text="${subject.getSubject().getBriefInfo()}">
+                            </option>
+                        </select>
+                        <input class="btn btn-dark" type="submit" value="Filter By Subject" style="background-color: #484747; padding: 4px">
+                    </form>
+                </th:block>
+                <th:block th:unless="${selectedSubject == null}">
+                    <form th:action="@{/user/simulation-exam/filter}" method="get">
+                        <select id="subjects" name="subject-id" style="padding: 3px">
+                            <option value="-1">All Subjects</option>
+                            <option th:each="subject : ${accessedSubjects}"
+                                    th:value="${subject.getSubject().getId()}"
+                                    th:text="${subject.getSubject().getBriefInfo()}"
+                                    th:selected="${subject.getSubject().getId() == selectedSubject.getId()}">
+                            </option>
+                        </select>
+                        <input class="btn btn-dark" type="submit" value="Filter By Subject" style="background-color: #484747;">
+                    </form>
+                </th:block>
+
+
+            </div>
+            <div class="search-box">
+                <form th:action="@{/user/simulation-exam/search}" method="get">
+                    <input type="text" name="exam-name" th:value="${examName}" placeholder="Search By Exam Name" style="border-radius: 5px; padding: 5px; border: 2px solid #333">
+                    <input type="submit" value="Search" class="btn btn-dark" style="background-color: #484747;">
+                </form>
+            </div>
+            <div class="button">
+                <a class="btn btn-primary" href="/user/practice-list" style="padding: 5px; font-size: 14px">Practice List</a>
+            </div>
+        </div>
+        <table class="table table-hover table-bordered simulation-exam-table" style="margin-top: 15px">
+            <thead style="background-color: #1368ce; color: white;">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Simulation Exam</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">No. of Questions</th>
+                    <th scope="col">Duration (Time)</th>
+                    <th scope="col">Pass Rate (%)</th>
+                    <th scope="col">Take Exam</th>
+                </tr>
+            </thead>
+            <tbody th:each="accessedLesson : ${accessedLessons}">
+                <tr>
+                    <td><a th:text="${accessedLesson.getId()}" th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}"></a></td>
+                    <td><a th:text="${accessedLesson.getSubject().getBriefInfo()}" th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}"></a></td>
+                    <td><a th:text="${accessedLesson.getName()}" th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}"></a></td>
+                    <td><a th:text="${accessedLesson.getLevel().getName()}" th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}"></a></td>
+                    <td><a th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}">10</a></td>
+                    <td><a th:text="${accessedLesson.getDuration()}" th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}">Duration Time</a></td>
+                    <td><a th:text="${accessedLesson.getPassRate() * 100} + '%'" th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}">Pass rate</a></td>
+                    <td><a th:href="@{/quiz-handle?id={id}&qid=0(id=${accessedLesson.getId()})}" class="view-detail">Take Exam</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div class="pagination">
+            <!-- no searching, no filtering pagination -->
+            <th:block th:if="${(examName == null || examName.isEmpty()) && selectedSubject == null}">
+                <ul class="pagination pagination-links">
+                    <th:block th:each="pageNumber : ${#numbers.sequence(0, accessedLessons.getTotalPages() - 1)}">
+                        <li class="page-item">
+                            <a class="page-link" th:if="${accessedLessons.getTotalPages() <= 5} or ${pageNumber == 0} or ${pageNumber == accessedLessons.getTotalPages() - 1} or (${pageNumber >= (page - 1) and pageNumber <= (page + 1)})"
+                               th:href="@{?page={page}(page = ${pageNumber + 1})}" th:text="${pageNumber + 1}" th:classappend="${accessedLessons.number == pageNumber ? 'active' : ''}">
+                            </a>
+                        </li>
+
+                        <li class="page-item" style="height: 28.45px;">
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and page == 3 and pageNumber == 1}">...</span>
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and page == 4 and pageNumber == 2}">...</span>
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and pageNumber == (page - 2) and page > 4}">...</span>
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and pageNumber == (page + 2) and page < (accessedLessons.getTotalPages() - 3)}">...</span>
+                        </li>
+                    </th:block>
+                </ul>
+            </th:block>
+
+            <th:block th:if="${(examName != null && !examName.isEmpty()) && selectedSubject == null}">
+                <ul class="pagination pagination-links">
+                    <th:block th:each="pageNumber : ${#numbers.sequence(0, accessedLessons.getTotalPages() - 1)}">
+                        <li class="page-item">
+                            <a class="page-link" th:if="${accessedLessons.getTotalPages() <= 5} or ${pageNumber == 0} or ${pageNumber == accessedLessons.getTotalPages() - 1} or (${pageNumber >= (page - 1) and pageNumber <= (page + 1)})"
+                               th:href="@{?exam-name={exam-name}&page={page}(page = ${pageNumber + 1}, exam-name=${examName})}" th:text="${pageNumber + 1}" th:classappend="${accessedLessons.number == pageNumber ? 'active' : ''}">
+                            </a>
+                        </li>
+
+                        <li class="page-item" style="height: 28.45px;">
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and page == 3 and pageNumber == 1}">...</span>
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and page == 4 and pageNumber == 2}">...</span>
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and pageNumber == (page - 2) and page > 4}">...</span>
+                            <span class="page-link" style="height: 28.45px;"
+                                  th:if="${accessedLessons.getTotalPages() > 5 and pageNumber == (page + 2) and page < (accessedLessons.getTotalPages() - 3)}">...</span>
+                        </li>
+                    </th:block>
+                </ul>
+            </th:block>
+        </div>
+    </section>
+
+
+    <!--  FOOTER -->
+    <div th:insert="/components/footer"></div>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+            crossorigin="anonymous"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>

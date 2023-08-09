@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Practice Detail</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+        <link rel="stylesheet" href="/css/components/header.css">
+        <link rel="stylesheet" href="/css/components/footer.css">
+        <link rel="stylesheet" href="/css/components/header_logged_in.css">
+        <style>
+            body {
+                padding-top: 60px;
+            }
+
+            .content-container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #fff;
+                height: 50vh;
+            }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .form-group label {
+                font-weight: bold;
+            }
+
+            .btn-group {
+                margin-top: 20px;
+            }
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body>
+    <block th:if="${userSession == null}">
+        <div th:insert="/components/header"></div>
+    </block>
+
+    <block th:if="${userSession != null}">
+        <div th:insert="/components/header_logged_in"></div>
+    </block>
+
+    <div class="container content-container">
+        <h1>Practice Detail</h1>
+        <form action="/practice/detail" method="post">
+            <div class="form-group row">
+                <label for="status" class="col-sm-4 col-form-label">Subject Name:</label>
+                <div class="col-sm-8" th:text="${takenQuizSubjects.briefInfo}"></div>
+            </div>
+            <div class="form-group row">
+                <label for="question" class="col-sm-4 col-form-label">Number of practicing questions:</label>
+                <div class="col-sm-8" th:text="${numberquestion}"></div>
+            </div>
+            <div class="form-group">
+                <label>Questions are selected by topic or dimension:</label>
+                <div th:text="${takenQuizLesson.getDimension().getName()}"></div>
+            </div>
+            <div class="form-group">
+                <label>Level:</label>
+                <div th:text="${takenQuizLesson.getLevel().getName()}"></div>
+            </div>
+            <div class="btn-group">
+                <a th:href="@{/user/practice-list}" class="btn btn-danger">Back</a>
+                <a th:href="@{/quiz_review?qr=true&id={id}&index_question=0(id = ${id})}" class="btn btn-primary">Quiz Review</a>
+                <a th:href="@{/quiz-handle?id={id}&qid=0(id=${id})}" class="btn btn-primary">Re-Practice</a>
+            </div>
+        </form>
+    </div>
+
+    <div th:insert="/components/footer"></div>
+
+    <script type="text/javascript">
+        function choose() {
+            $.ajax({
+                type: 'POST',
+                url: '/subject/choose',
+                data: {
+                    id: $('#type').val(),
+                },
+                success: function (data, status, xhr) {
+                    $('#level').html(data);
+                }
+            })
+        }
+    </script>
+</body>
+</html>

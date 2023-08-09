@@ -1,0 +1,197 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+html {
+    font-size: 10px;
+}
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: #f2f2f2;
+
+    font-size: 1.4rem;
+}
+
+/* ======= BODY STYLE ===========*/
+#body {
+    min-height: 50vh;
+    /*background-color: #ffffff;*/
+    margin: 9rem 8rem 3rem 8rem;
+}
+
+#body h1 {
+    font-size: 2rem;
+    font-weight: 650;
+    color: #1368ce;
+}
+
+div.functionalities {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.4rem;
+}
+
+div.new-subject-notify {
+
+}
+
+div.radio-label {
+    height: 32px;
+    width: 178px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 2px solid #1368ce;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+ul.category-id-ul {
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 6px;
+    position: absolute;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+    /* border: 2px solid #1368ce; */
+    /* visibility: hidden; */
+    display: none;
+    z-index: 1001;
+}
+
+.radio-label.open ~ .category-id-ul {
+    display: block;
+}
+
+.selected_categories_ul {
+    color: #ffffff;
+    background-color: #1368ce;
+    width: fit-content;
+    padding: 3px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+.selected_categories_inline {
+    display: inline;
+}
+
+.practice-list-table {
+    margin-top: 1rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
+    text-align: center;
+}
+
+.practice-list-table thead {
+    font-size: 1.6rem;
+}
+
+.practice-list-table tr {
+    height: 4rem;
+}
+
+.practice-list-table th, .practice-list-table td {
+    padding-top: 1rem;
+}
+
+.practice-list-table td a {
+    color: #333;
+}
+
+form {
+    margin-right: 15px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+select {
+    border-radius: 5px;
+}
+
+.practice-list-table .view-detail {
+    color: #1368ce;
+    font-weight: 500;
+}
+
+.disabled {
+    pointer-event: none;
+    cursor: default;
+}
+
+.active {
+    background-color: #1368ce;
+    color: #ffffff;
+}
+
+.pagination-links a {
+    font-size: 13px;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #c8f0c5;
+    height: 200px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1), 0 0 0 1000px rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-radius: 10px;
+    overflow: hidden;
+    visibility: hidden;
+    width: 530px;
+}
+
+.popup h2 {
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 500;
+    color: #333;
+}
+
+.popup.active {
+    visibility: visible;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px 20px;
+    background-color: #f00;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+#my-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10000000;
+    visibility: hidden;
+}
+
+#my-canvas.active {
+    visibility: visible;
+}

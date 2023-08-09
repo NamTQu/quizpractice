@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2864F6;
+}
+h1 {
+    text-align: center;
+    color: #d32f2f;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    margin-left: 110px;
+}
+.home-link {
+    padding: 10px 20px;
+    background-color: #2864F6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+.form-group input[type="radio"] {
+    margin-top: 8px;
+}
+.form-group input[type="submit"] {
+    background-color: #2864F6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.form-group input[type="submit"]:hover {
+    background-color: #2864F5;
+}
+.login-section {
+    text-align: center;
+    margin-top: 20px;
+}
+.login-section p {
+    margin-bottom: 10px;
+}
+.login-section a {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.login-section a:hover {
+    background-color: #d32f2f;
+}
+h2 {
+    text-align: center;
+    color: #2864F6;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+

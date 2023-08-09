@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>IQuizz - IQ Quizzes</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="/css/admin/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="/js/admin/admin.js"></script>
+</head>
+<body>
+    <block th:if="${userSession==null}">
+        <div th:insert="components/header"></div>
+    </block>
+    <block th:if="${userSession!=null}">
+        <div th:insert="components/header_logged_in"></div>
+    </block>
+    <main>
+        <div class="container">
+			<div class="row">
+                <div class="col">
+                    <button class="btn d-flex justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-plus-square btn-lg" viewBox="0 0 16 16" onclick="showPopup()">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>  
+                    </button>
+                </div>
+                <div class="col">
+                    <div class="d-flex">
+                        <select class="form-select" id="sortBySelect" onchange="navigateToInteract()">
+                            <option value="id" selected>Sort by ID</option>
+                            <option value="fullName">Sort by Full Name</option>
+                            <option value="gender">Sort by Gender</option>
+                            <option value="email">Sort by Email</option>
+                            <option value="mobile">Sort by Mobile</option>
+                            <option value="role">Sort by Role</option>
+                            <option value="enable">Sort by Status</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex">
+                        <select class="form-select" id="orderSelect" onchange="navigateToInteract()">
+                            <option hidden>Order by</option>
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex">
+                        <select class="form-select" id="genderSelect" onchange="navigateToInteract()">
+                            <option value="" hidden>Filter by gender</option>
+                            <option value="">All gender</option>
+                            <option value="true">Male</option>
+                            <option value="false">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex">
+                        <select class="form-select" id="roleSelect" onchange="navigateToInteract()">
+                            <option value="" hidden>Filter by role</option>
+                            <option value="">All role</option>
+                            <option th:each="role:${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex">
+                        <select class="form-select" id="statusSelect" onchange="navigateToInteract()">
+                            <option value="" hidden>Filter by status</option>
+                            <option value="">All status</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <form class="col" method="get" action="/admin/user-list">
+                    <div class="d-flex justify-content-center mb-3">
+                        <input type="search" name="searchValue" placeholder="Search for user" id="search" class="form-control search-box" style="width: 80%" />
+                        <button class="btn btn-primary" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="container" th:if="${totalPages>0 && pageNo<=totalPages && pageNo>0}">
+            <table class="table table-bordered table-grey">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Full name</th>
+                        <th>Gender</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user: ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.fullName}"></td>
+                        <td>
+                            <p th:if="${user.gender == true}">Male</p>
+                            <p th:if="${user.gender == false}">Female</p>
+                        </td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.mobile}"></td>
+                        <td th:text="${user.role.name}"></td>
+                        <td>
+                            <p th:if="${user.enable == true}">Active</p>
+                            <p th:if="${user.enable == false}">Inactive</p>
+                        </td>
+                        <td>
+                            <a th:href="@{'/admin/user-detail?userId='+${user.id}}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row" th:if="${totalPages>0 && pageNo<=totalPages && pageNo>0}">
+            <div class="col d-flex justify-content-end">
+                <button class="btn" th:attr="onclick=|moveBack('${pageNo}')|" th:if="${pageNo>1}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left" viewBox="0 0 16 16">
+                        <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="col">
+                <h4 class="text-center" th:text="'Page ' + ${pageNo} + '/' + ${totalPages}"></h4>
+            </div>
+            <div class="col d-flex justify-content-start">
+                <button class="btn" th:attr="onclick=|moveOn('${pageNo}')|" th:if="${pageNo<totalPages}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right" viewBox="0 0 16 16">
+                        <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="row" th:if="${totalPages<0 || pageNo>totalPages || pageNo<0}">
+            <div class="col">
+            </div>
+            <div class="col">
+                <h1>Not found</h1>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div id="popupForm" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add User</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="/admin/add-user" method="post">
+                        <div class="form-group">
+                            <label for="fullName">Full Name:</label>
+                            <input type="text" class="form-control" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role:</label>
+                            <select class="form-control" id="role" name="role" required>
+                                <option th:each="role:${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" onclick="hidePopup()">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:insert="components/footer"></div>
+</body>
+</html>

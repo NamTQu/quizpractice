@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
+            integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" th:href="@{/templates_components_assets/css/header.css}">
+    <link rel="stylesheet" th:href="@{/templates_components_assets/css/footer.css}">
+</head>
+<body class="bg-neutral-50 text-teal-700">
+<th:block th:if="${userSession == null}">
+    <div th:insert="components/header"></div>
+</th:block>
+
+<th:block th:if="${userSession != null}">
+    <div th:insert="components/header_logged_in"></div>
+</th:block>
+<main>
+
+    <div>
+        <aside class="fixed top-0 left-0 bottom-0 pt-16 w-52 z-10 border-r border-black/10">
+            <div class="flex flex-col items-start">
+                <a href="#" class="block px-8 py-2 font-bold">
+                        <span class="inline-block w-3">
+                            <i class="fa-solid fa-book"></i>
+                        </span>
+                    <span class="inline-block ml-2">Courses</span>
+                </a>
+                <a href="#" id="categories-btn" class="block px-8 pt-2 pb-1 font-bold">
+                        <span class="inline-block w-3 transition-all">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    <span class="inline-block ml-2">Categories</span>
+                </a>
+                <ul id="categories-list" class="hidden flex-col items-start w-full ml-6">
+                    <li th:each="ca:${cat}">
+                        <a href="" class="block px-8 py-1" th:text="${ca.name}"></a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        <article class="ml-52 mt-16">
+            <div class="px-16 py-8 grid grid-cols-12">
+                <div class="col-span-8">
+                    <a th:href="@{'/user/myregistration'}" class="block mb-6"><i class="fa-solid fa-chevron-left"></i> Back to course list</a>
+                    <ul class="w-full">
+                        <li th:each=" su:${sub}">
+                        <a th:href="@{'/user/myregistration'+${su.id}}" class="flex gap-4 w-full border border-black/20 p-4 rounded-3xl mb-6">
+                            <img src="https://anhcocvang.com/static/media/MAE101.ee704482946a2485d1e5.png" alt="course" class="rounded-xl w-60">
+                            <div>
+                                <h3 class="font-bold text-2xl mb-2" th:text="${su.getBriefInfo()}"></h3>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore quidem consectetur aspernatur culpa placeat atque commodi iure ad ab omnis!</p>
+                            </div>
+                        </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+    </div>
+</main>
+<div th:insert="components/footer"></div>
+<script>
+    const categoriesBtn = document.getElementById('categories-btn');
+    const categoriesIcon = categoriesBtn.querySelector('span');
+    const categoriesList = document.getElementById('categories-list');
+    categoriesBtn.onclick = function() {
+        categoriesIcon.classList.toggle('rotate-90');
+        categoriesList.classList.toggle('hidden');
+    }
+</script>
+</body>
+</html>

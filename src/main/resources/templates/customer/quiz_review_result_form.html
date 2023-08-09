@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" th:href="@{/css/customer/quizreviewresult.css}">
+        <link rel="stylesheet" href="/css/customer/quizreviewresult.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    </head>
+    <body>
+        <div id="popup">
+            <div id="popup-content">   
+                <div class="popup-header">
+                    <a th:href="@{/quiz_review_result?id={id}&type=all(id=${id})}">  <button class="popup-button">All Question</button> </a>
+                    <a th:href="@{/quiz_review_result?id={id}&type=bookmark(id=${id})}"> <button class="popup-button">Marked</button> </a>
+                    <a th:href="@{/quiz_review_result?id={id}&type=correct(id=${id})}"> <button class="popup-button">Correct</button> </a>
+                    <a th:href="@{/quiz_review_result?id={id}&type=incorrect(id=${id})}"> <button class="popup-button">Incorrect</button> </a>
+                </div>
+                <div class="popup-content">
+                    <div th:each ="item: ${listQuestion}">
+                        <div th:if="${item.getBookmark() == 1}" class="question-box">
+                            <a th:href="@{/quiz_review_detail(id=${id},index_question=${item.getId()})}" ><p th:text="${item.getId()}"></p></a><i class="fas fa-bookmark"></i>
+                        </div>
+                        <div th:if="${item.getBookmark() != 1}" class="question-box">
+                            <a th:href="@{/quiz_review_detail(id=${id},index_question=${item.getId()})}" ><p th:text="${item.getId()}"></p></a>
+                        </div>  
+                    </div>
+                </div>
+                <div class="back_button">
+                    <a th:href="@{/quiz_review?qr=true&id={id}&index_question=0(id = ${id})}" > <button class="button button1">Đóng</button> </a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

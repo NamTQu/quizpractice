@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>IQuizz - IQ Quizzes </title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="/css/testingContent/quiz.css">
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div th:insert="components/header_logged_in"></div>
+
+<h1 style="margin-top: 25px; font-size: 25px; color: #1368ce; padding: 20px; text-align: left;">QUIZ DETAIL</h1>
+<div class="tabset">
+    <!-- Tab 1 -->
+    <input type="radio" name="tabset" id="tab1" aria-controls="marzen" checked>
+    <label for="tab1">Overview</label>
+    <!-- Tab 2 -->
+    <input type="radio" name="tabset" id="tab2" aria-controls="rauchbier" onchange="fetchNewData()">
+
+    <input type="hidden" name="tabset" id="originSubject" th:unless="${lesson.name==null}" th:value="${lesson.subject.id}">
+
+    <input type="hidden" name="tabset" id="originSubject" th:if="${lesson.name==null}" th:value="1">
+    <input type="hidden" name="tabset" id="currentSubject" value="-1">
+    <label for="tab2">Setting</label>
+
+
+    <form th:action="@{/quiz/save}" method="post" th:object="${lesson}" class="tab-panels">
+        <section id="marzen" class="tab-panel">
+            <div class="contact-form row">
+                <input type="hidden" id="lessonId" th:field="*{id}">
+                <input type="hidden" th:field="*{lessonType}" th:value=1>
+                <input type="hidden" th:field="*{status}" th:value="true">
+                <input type="hidden" th:field="*{creator}" th:value="user">
+                <div class="form-field col x-50">
+                    <input th:if="${lesson.name == null || lesson.name.isBlank()}" id="course-name"
+                           class="input-text js-input" type="text" th:field="*{name}"
+                           required/>
+                    <input th:unless="${lesson.name == null || lesson.name.isBlank()}" id="course-name"
+                           class="input-text not-empty js-input" type="text" th:field="*{name}"
+                           th:value="${lesson.name}" required/>
+                    <label class="label" for="course-name">Name</label>
+                </div>
+                <div class="form-field col x-50">
+                    <select class="input-text not-empty" id="subjectSelect" onchange="" th:field="*{subject}">
+                        <option th:each="sub:${subjects}" th:value="${sub.id}" th:text="${sub.briefInfo}"></option>
+                    </select>
+                    <label class="label" for="subjectSelect"> Subject</label>
+                </div>
+                <div class="form-field col x-50">
+                    <select class="input-text not-empty" id="levelSelect" onchange="" th:field="*{level}">
+                        <option th:each="level:${levels}" th:value="${level.id}" th:text="${level.name}"></option>
+                    </select>
+                    <label class="label" for="levelSelect">Exam Level</label>
+                </div>
+                <div class="form-field col x-50" style="display: flex; justify-content: space-between">
+                    <input class="input-text" type="number" min="0" max="23" step="1" id="duration_hours"
+                           th:value="${duration.hour}" required/>:
+                    <input class="input-text" type="number" min="0" max="59" step="1" id="duration_minutes"
+                           th:value="${duration.minute}" required/>:
+                    <input class="input-text" type="number" min="0" max="59" step="1" id="duration_seconds"
+                           th:value="${duration.second}" required/>
+                    <input id="duration" class="input-text not-empty js-input" type="hidden" th:field="*{duration}"/>
+                    <label class="label" for="duration">Duration</label>
+                </div>
+                <div class="form-field col x-50">
+                    <input th:if="${lesson.passRate == null}" id="pass" class="input-text js-input"
+                           th:field="*{passRate}" type="text" required>
+                    <input th:unless="${lesson.passRate == null}" id="pass" class="input-text not-empty js-input"
+                           th:field="*{passRate}" th:value="${lesson.passRate}" type="text" required>
+                    <label class="label" for="pass">Pass Rate (%)</label>
+                </div>
+                <div class="form-field col x-50">
+                    <select class="input-text not-empty" id="typSelect" onchange="" th:field="*{testType}">
+                        <option th:each="type:${types}"  th:value="${type.id}"
+                                th:text="${type.name}"></option>
+                    </select>
+                    <label class="label" for="typSelect"> Quiz types</label>
+                </div>
+                <div class="form-field col x-40 align-center">
+                    <a th:href="@{/testingcontent/quizzeslist}" class="submit-btn"> Back
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section id="rauchbier" class="tab-panel">
+            <div class="contact-form row">
+                <div class="form-field col x-100">
+                    <input id="noQuestionId" class="input-text not-empty js-input" type="text" readonly>
+                    <label class="label" for="noQuestionId">Number of Questions</label>
+                </div>
+                <div class="form-field col x-100">
+                    <div class="input-text not-empty" id="sort">
+                        <input type="radio" id="TOPIC" name="sort" value="TOPIC" onchange="showContainer(this)" checked>
+                        <label for="TOPIC">Topic</label>
+                        <input type="radio" id="DOMAIN" name="sort" value="DOMAIN" onchange="showContainer(this)">
+                        <label for="DOMAIN">Domain</label>
+                        <input type="radio" id="GROUP" name="sort" value="GROUP" onchange="showContainer(this)">
+                        <label for="GROUP">Group</label>
+                    </div>
+                    <label class="label" for="sort"> Sort by</label>
+                </div>
+                <div class="dropdown-container" id="topic-content">
+                    <button type="button" onclick="addTopicDropdown(null, -1, 0)">Add</button>
+
+                </div>
+                <div class="dropdown-container" id="domain-content" style="display: none">
+                    <button type="button" onclick="addDomainDropdown(null, -1, 0)">Add</button>
+
+                </div>
+                <div class="dropdown-container" id="group-content" style="display: none">
+                    <button type="button" onclick="addGroupDropdown(null, -1, 0)">Add</button>
+
+                </div>
+                <div class="dropdown-container"></div>
+                <div class="form-field col x -40 align-center">
+                    <input class="submit-btn" type="submit" value="Submit">
+                </div>
+                <div class="form-field col x-80 align-center">
+                    <a th:href="@{/testingcontent/quizzeslist}" class="submit-btn"> Back
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    </form>
+
+    <div th:insert="components/footer"></div>
+</div>
+
+
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+    const types = [[${subCategories}]]
+
+    /*]]>*/
+    const typesToId = {
+        'TOPIC': 'topic-content',
+        'GROUP': 'group-content',
+        'DOMAIN': 'domain-content'
+    }
+
+    function showContainer(x) {
+        const contents = document.querySelectorAll('.dropdown-container');
+        contents.forEach(content => {
+            if (content.id !== typesToId[x.value]) {
+                content.style.display = 'none';
+            } else {
+                content.style.display = null;
+            }
+
+        })
+    }
+
+</script>
+<script src="/js/testing/quizzes.js"></script>
+</body>
+</html>

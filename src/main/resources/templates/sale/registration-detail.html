@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQuizz - IQ Quizzes</title>
+    <link rel="stylesheet" href="/css/admin/userdetail.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="/js/sale/registration-detail.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+    <block th:if="${userSession==null}">
+        <div th:insert="components/header"></div>
+    </block>
+    <block th:if="${userSession!=null}">
+        <div th:insert="components/header_logged_in"></div>
+    </block>
+    <main>
+        <div class="row" style="margin-bottom: 20px;">
+            <span onclick="backToParents()" class="fake-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+                    <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z"/>
+                </svg>
+                Back to user list
+            </span>
+        </div>
+        <div class="row">
+            <div class="col-xl-4">
+
+            </div>
+            <div class="col-xl-8">
+                <div class="card mb-4">
+                    <div class="card-header">Registration Details</div>
+                    <div class="card-body">
+                        <form method="post" action="/sale/registration-detail/change">
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-3">
+                                    <label class="small mb-1" for="inputEmail">User's email</label>
+                                    <input class="form-control" name="email" id="inputEmail" type="email" th:value="${registration.user.email}" readonly>    
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="small mb-1" for="inputFullName">User's full name</label>
+                                    <input class="form-control" name="fullName" id="inputFullName" type="text" th:value="${registration.user.fullName}" disabled>    
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="small mb-1" for="inputGender">User's gender</label>
+                                    <input class="form-control" name="gender" id="inputGender" type="text" th:value="${registration.user.gender != null ? (registration.user.gender == 'true' ? 'Male' : 'Female') : ''}" disabled>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="small mb-1" for="inputMobile">User's mobile</label>
+                                    <input class="form-control" name="mobile" id="inputMobile" type="text" th:value="${registration.user.mobile}" disabled>    
+                                </div>
+                            </div>
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputSubject">Subject</label>
+                                    <select class="form-control" name="subject" id="inputSubject" onchange="getPricePackage()" disabled>
+                                        <option th:each="subject : ${subjectList}" th:value="${subject.id}" th:text="${subject.title}" th:selected="${subject.id eq registration.subject.id}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputPricePackage">Price package</label>
+                                    <select class="form-control" name="pricePackage" id="inputPricePackage" onchange="changePrice()" disabled>
+                                        <option th:each="pricePackage : ${pricePackageList}" th:value="${pricePackage.id}" th:text="${pricePackage.name}" th:selected="${pricePackage.id eq registration.pricePackage.id}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="small mb-1" for="inputRegistration">Registration Time</label>
+                                    <input class="form-control" id="inputRegistration" type="text" th:value="${registration.registrationTime}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small mb-1" for="inputValidFrom">Valid from</label>
+                                    <input class="form-control" name="validFrom" id="inputValidFrom" type="datetime-local" th:value="${registration.validFrom}" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small mb-1" for="inputValidTo">Valid to</label>
+                                    <input class="form-control" id="inputValidTo" type="datetime" th:value="${registration.validTo}" disabled>
+                                </div>
+                            </div>
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputStatus">Status</label>
+                                    <select class="form-control" name="status" id="inputStatus" disabled>
+                                        <option th:each="status : ${statusList}" th:value="${status.id}" th:text="${status.name}" th:selected="${status.id eq registration.registrationStatus.id}"></option>
+                                    </select>                                
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputNote">Notes</label>
+                                    <input class="form-control" id="inputNote" name="notes" type="text" th:value="${registration.notes}" disabled>
+                                </div>
+                            </div>
+                            <input type="hidden" name="registrationId" th:value="${registration.id}">
+                            <input type="hidden" name="isYours" th:value="${isYours}">
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="listPrice">List price</label>
+                                    <div th:text="${registration.pricePackage.listPrice}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="salePrice">Sale price</label>
+                                    <div th:text="${registration.pricePackage.salePrice}"></div>
+                                </div>
+                            </div>
+                            <!-- Save changes button-->
+                            <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-primary" id="change-button" type="button" th:attr="onclick=|change('${isYours}')|">Edit</button>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-primary" id="save-button" type="submit" style="display:none">Save changes</button>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-primary" id="cancel-button" type="button" style="display:none" onclick="cancel()">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:insert="components/footer"></div>
+</body>
+</html>

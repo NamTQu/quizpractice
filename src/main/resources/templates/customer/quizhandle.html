@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quiz</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+
+            h1, h2 {
+                text-align: center;
+            }
+
+            form {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            fieldset {
+                border: none;
+                margin-bottom: 10px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            input[type="radio"] {
+                margin-right: 5px;
+            }
+
+            .btn-container {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .btn-container button {
+                margin-right: 10px;
+                padding: 10px 20px;
+                font-size: 16px;
+                border: none;
+                border-radius: 3px;
+                color: #fff;
+                background-color: #007bff;
+                cursor: pointer;
+            }
+
+            .btn-container button:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+            .btn-container button.submit {
+                background-color: #28a745;
+            }
+
+            .quiz-completed {
+                text-align: center;
+                margin-top: 50px;
+            }
+
+            .quiz-completed h1 {
+                color: #28a745;
+            }
+
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            .pagination a {
+                margin: 0 5px;
+                padding: 5px 10px;
+                text-decoration: none;
+                color: #007bff;
+                border: 1px solid #007bff;
+                border-radius: 3px;
+                transition: background-color 0.3s ease;
+            }
+
+            .pagination a:hover {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+            .pagination .current {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+        </style>
+
+        <script>
+            function submit() {
+                document.getElementById("submit-btn").click();
+            }
+        </script>
+    </head>
+    <body>
+    <th:block th:if="${userSession == null}">
+        <div th:insert="/components/header"></div>
+    </th:block>
+
+    <th:block th:if="${userSession != null}">
+        <div th:insert="/components/header_logged_in"></div>
+    </th:block>
+    <h1 style="text-align: center;  margin-top: 80px; margin-bottom: 30px ; color: #1C4DA4;" th:text="'Quiz Handle: '+${les.name}"></h1>
+
+<!--    <h1>Question <span th:text="${qid + 1}"></span>:</h1>-->
+    <h2 th:text="'Q'+ ${qid+1}+'. '+${currentQuestion.getContent()}"></h2>
+    <form method="post" th:action="@{/quiz-handle}">
+        <fieldset>
+            <legend>Options:</legend>
+            <div th:each="option : ${currentAnswer}">
+                <div th:if="${option.explanation == answered}">
+                    <label>
+                        <input type="radio" th:name="optionGroup" th:value="${option.explanation}"  checked onclick="submit();">
+                        <span th:text="${option.explanation}"></span>
+                    </label>
+                </div>
+                <div th:if="${option.explanation != answered}">
+                    <label>
+                        <input type="radio" th:name="optionGroup" th:value="${option.explanation}" onclick="submit();">
+                        <span th:text="${option.explanation}"></span>
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+        <div class="btn-container">
+            <div th:if="${qid != 0}">
+                <a th:href="@{/quiz-handle(id=${id}, qid=${qid - 1})}" class="btn btn-primary">Previous</a>
+            </div>
+            <div th:if="${qid != size}">
+                <a th:href="@{/quiz-handle(id=${id}, qid=${qid + 1})}" class="btn btn-primary">Next</a>
+            </div>
+            <button type="submit" name="action" id="submit-btn" value="submit" class="submit" hidden>Submit</button>
+            <a th:href="@{/submit(id=${id}, qid=${qid})}"> Submit Quiz Here </a>
+        </div>
+    </form>
+
+    <div class="pagination">
+        <a th:each="i : ${#numbers.sequence(0, size)}" 
+           th:class="${qid == i} ? 'current' : ''" 
+           th:href="@{/quiz-handle(id=${id}, qid=${i})}" 
+           th:text="${i + 1}"></a>
+    </div>
+    
+    <div th:insert="/components/footer"></div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Lesson Detail</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+        <link rel="stylesheet" th:href="@{/css/components/header.css}">
+        <link rel="stylesheet" th:href="@{/css/components/footer.css}">
+        <link rel="stylesheet" th:href="@{/css/components/header_logged_in.css}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body>
+    <th:block th:if="${userSession == null}">
+        <div th:insert="/components/header"></div>
+    </th:block>
+
+    <th:block th:if="${userSession != null}">
+        <div th:insert="/components/header_logged_in"></div>
+    </th:block>
+    <h1 style="text-align: center; margin-top: 100px">Lesson Detail</h1>
+    <form action="/lesson/add" method="post">
+        <input type="hidden" name="subject_id" th:value="${subject_id}">
+        <div class="form-group col-6">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" th:value="${name}" required>
+        </div>
+        <div id="lessonContent" class="form-group col-6" >
+            <label for="noidung">Content</label>
+            <textarea class="form-control" id="noidung" name="noidung" rows="6" th:text="${htmlContent}"></textarea>
+        </div>
+        <div id="VideoContent" class="form-group col-6">
+            <label for="video">Link Video</label>
+            <input type="text" class="form-control" id="video" name="video" th:value="${videoLink}" onchange="loadVideo()">
+            <video id="video-url" controls style="display: none"></video>
+        </div>
+        <div class="form-group col-6">
+            <label for="order">Order</label>
+            <select class="form-control" id="order" name="order" required>
+                <option value="1" >1</option>
+                <option value="2" >2</option>
+                <option value="3" >3</option>
+            </select>
+        </div>
+        <div class="form-group col-6">
+            <label for="status">Status</label>
+            <select class="form-control" id="status" name="status" required>
+                <option value="1" >Active</option>
+                <option value="2" >Deactive</option>
+            </select>
+        </div>
+        <div class="form-group col-6">
+            <label for="dimension">Dimension</label>
+            <select class="form-control" id="dimension" name="dimension">
+                <option th:each="item:${listDismension}" th:value="${item.id}" th:text="${item.name}"></option>
+            </select>
+        </div>
+        <div class="form-group col-6">
+            <label for="type">Type</label>
+            <select class="form-control" id="type" name="lessonType" onchange="toggleDisplay()">
+                <option th:each="item:${listLessonType}" th:value="${item.id}" th:text="${item.name}"></option>
+            </select>
+        </div>
+        <div class="form-group col-6">
+            <label for="level">Level</label>
+            <select class="form-control" id="level" name="level">
+                <option th:each="item:${listLevel}" th:value="${item.id}" th:text="${item.name}"></option>
+            </select>
+        </div>
+        <div id="quizzContent" class="form-group col-6">
+            <label for="subject">Subject</label>
+            <select class="form-control" id="subject" name="subject">
+                <option th:each="item:${listSubject}" th:value="${item.id}" th:text="${item.title}"></option>
+            </select>
+        </div>
+        <div class="form-group col-6">
+            <label for="testtype">Test Type</label>
+            <select class="form-control" id="testtype" name="testtype">
+                <option th:each="item:${listTestType}" th:value="${item.id}" th:text="${item.name}"></option>
+            </select>
+        </div>
+        <div class="form-group col-12">
+            <a class="btn btn-danger" th:href="@{/subject/lessonList?id={id}(id = ${subject_id})}" >Back</a>
+            <button type="submit" class="btn btn-primary" >Lưu</button>
+        </div>  
+    </form>
+    <div th:insert="/components/footer"></div>
+    <script src="/js/admin/jquery.js"></script>
+    <script src="/js/admin/boostrap-bundle.min.js"></script>
+    <script type="text/javascript" src="/js/admin/datatables.min.js"></script>
+    <script src="/js/admin/all.min.js"></script>
+    <script src="/js/admin/ckeditor.js"></script>
+    <script type="text/javascript">
+                let ckEditor;
+                ClassicEditor
+                        .create(document.querySelector('#noidung'))
+                        .then(editor => {
+                            ckEditor = editor;
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                function loadVideo() {
+                    var url = $('#video').val();
+                    $('#video-url').crossOrigin = 'anonymous';
+                    $('#video-url').attr('src', url);
+                    $('#video-url').css('display', 'block');
+                    $("#video-url")[0].load();
+                    $("#video-url")[0].play();
+                }
+
+                $.ready(function () {
+                    if ($('#video-url').src) {
+                        $('#duration').val($('#video-url').duration)
+                    }
+                })
+    </script>
+    <script>
+    function toggleDisplay() {
+        var type = document.getElementById("type").value;
+        var lessonContent = document.getElementById("lessonContent");
+        var quizzContent = document.getElementById("quizzContent");
+        var VideoContent = document.getElementById("VideoContent");
+
+        if (type === "1") {
+              VideoContent.style.display = "none";
+              quizzContent.style.display = "block";
+        } else if(type==="2"){
+              lessonContent.style.display = "block";
+              VideoContent.style.display = "block";
+              quizzContent.style.display = "none";
+        }else if (type === "3") {
+            lessonContent.style.display = "none";
+            VideoContent.style.display = "none";
+            quizzContent.style.display = "block";
+        }
+    }
+    </script>
+</body>
+</html>
+

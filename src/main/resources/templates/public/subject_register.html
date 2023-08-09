@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+    <link rel="stylesheet" href="/static/css/public/subject_register.css">
+
+</head>
+<div class="container">
+
+    <div class="text-center"><h2 th:name="cid" th:value="${subject.id}" th:text="${subject.getBriefInfo()}"></h2></div>
+
+
+    <div class="row" style="margin-top: 60px ;">
+        <!-- Free Tier -->
+        <div class="col-lg-3 " style="margin-left: 60px">
+            <div class="card mb-4 mb-lg-0">
+                <div class="card-body">
+                    <h5 class="card-title text-muted text-uppercase text-center" th:text="${pack.get(0).getName()}"></h5>
+                    <h6 class="card-price text-center" th:text="${pack.get(0).getSalePrice() + 'd'}"></h6>
+                    <ul class="fa-ul">
+                    </ul>
+                    <div class="d-grid">
+                        <form  th:unless= "${userSession==null}"
+                               th:action="@{'/user/registration/save/'+${uid}+'/'+${subject.id}}"
+                               th:method="get">
+                            <button type="submit"
+                                    class="btn btn-primary text-uppercase"
+                                    th:name="button"
+                                    th:value="${pack.get(0).id}">Click me!</button>
+                        </form>
+                        <form  th:if= "${userSession==null}"
+                               th:action="@{'/login'}"
+                               th:method="get">
+                            <button type="submit"
+                                    class="btn btn-primary text-uppercase"
+                                    th:name="button"
+                                    th:value="${pack.get(0).id}">Click me!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Plus Tier -->
+        <div class="col-lg-3">
+            <div class="card mb-4 mb-lg-0">
+                <div class="card-body">
+                    <h5 class="card-title text-muted text-uppercase text-center" th:text="${pack.get(1).getName()}"></h5>
+                    <h6 class="card-price text-center" th:text="${pack.get(1).getSalePrice() + 'd'}"></h6>
+                    <hr>
+                    <div class="d-grid">
+                        <form  th:unless= "${userSession== null}"
+                               th:action="@{'/user/registration/save/'+${userSession.id}+'/'+${subject.id}}"
+                               th:method="get">
+                            <button type="submit" id="sub"
+                                    class="btn btn-primary text-uppercase"
+                                    th:name="button"
+                                    th:value="${pack.get(1).id}">Click me!</button>
+                        </form>
+                        <form  th:if= "${userSession== null}"
+
+                               th:action="@{'/login'}"
+                               th:method="get">
+                            <button type="submit"
+                                    class="btn btn-primary text-uppercase"
+                                    th:name="button"
+                                    th:value="${pack.get(1).id}">Click me!</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pro Tier -->
+        <div class="col-lg-3">
+            <div class="card mb-4 mb-lg-0">
+                <div class="card-body">
+                    <h5 class="card-title text-muted text-uppercase text-center" th:text="${pack.get(2).getName()}"></h5>
+                    <h6 class="card-price text-center" th:text="${pack.get(2).getSalePrice() + 'd'}"></h6>
+                    <hr>
+                    <div class="d-grid">
+                        <form  th:unless= "${userSession== null}"
+                               th:action="@{'/user/registration/save/'+${userSession.id}+'/'+${subject.id}}"
+                               th:method="get">
+                            <button type="submit"
+                                    class="btn btn-primary text-uppercase"
+                                    th:name="button"
+                                    th:value="${pack.get(2).id}">Click me!</button>
+                        </form>
+                        <form  th:if= "${userSession== null}"
+                               th:action="@{'/login'}"
+                               th:method="get">
+                            <button type="submit"
+                                    class="btn btn-primary text-uppercase"
+                                    th:name="button"
+                                    th:value="${pack.get(2).id}">Click me!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const forms = document.getElementsByClassName("btn btn-primary text-uppercase");
+    for (let i = 0; i < forms.length; i=i+2) {
+        forms[i].addEventListener("submit", function(event) {
+            event.preventDefault(); // prevent the default form submission
+
+            const msg = "You have been register the subject successfully." + "\n" +
+                " Please purchase the course through Bank Account: 0787129386, OCB" + "\n" +
+                "following syntax: UseName + CourseID + DateRegistration";
+            const url = window.location.href;
+
+// Extract the values of user_id and course_id from the URL
+            const uid = url.split("/")[5];
+            const cid = url.split("/")[6];
+
+// Replace {user_id} and {course_id} in the URL with the actual values
+            const target_url = "/user/registration/save/" + uid + "/" + cid;
+            const value = this.value;
+            if(confirm(msg)){
+                const button = event.currentTarget.getAttribute("th:value");
+                window.location.href = target_url;
+
+            }
+        });
+    }
+</script>

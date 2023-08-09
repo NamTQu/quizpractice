@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
+          integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+<body class="bg-neutral-50 text-teal-700">
+<div th:insert="components/header_logged_in"></div>
+<main>
+  <div style="margin-top: 12px" class="flex items-center justify-center border-b border-b-black/10 fixed top-50 left-0 right-0 w-full z-20 bg-neutral-50">
+    <div class="flex items-center justify-between px-8 py-1 w-full">
+      <a href="https://facebook.com/iamntnm" target="_blank" class="text-2xl font-bold">Course App</a>
+      <form th:action="@{'/user/registration/search'}" th:method="get">
+        <label for="search"></label><input type="text"
+                                           class="rounded-full w-96 border-2 border-black/20 px-4 py-2" placeholder="Find your subjects.."
+                                           id="search" name="search" th:value="${search}" required />
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+          Search
+        </button>
+      </form>
+    </div>
+  </div>
+  <div>
+    <aside style="margin-top: 30px" class="fixed top-0 left-0 bottom-0 pt-16 w-52 z-10 border-r border-black/10">
+      <div class="flex flex-col items-start">
+        <a href="#" class="block px-8 py-2 font-bold">
+                        <span class="inline-block w-3">
+                            <i class="fa-solid fa-book"></i>
+                        </span>
+          <span class="inline-block ml-2">Courses</span>
+        </a>
+        <a href="#" id="categories-btn" class="block px-8 pt-2 pb-1 font-bold">
+                        <span class="inline-block w-3 transition-all">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+          <span class="inline-block ml-2">Categories</span>
+        </a>
+        <ul id="categories-list" class="hidden flex-col items-start w-full ml-6">
+          <li th:each="ca:${cat}">
+            <a href="" class="block px-8 py-1" th:text="${ca.getName()}"></a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <article class="ml-52 mt-20">
+      <div class="px-16 py-8">
+        <div class="relative mb-8 overflow-auto">
+          <h1 class="text-2xl font-bold capitalize mb-6">Courses purchased</h1>
+          <ul id="courses-purchased" class="flex snap-x gap-4 w-full overflow-x-hidden">
+            <li th:each="reg:${regis}" th:if="${reg.getStatus() != 'pending'}">
+              <a th:href="@{'/user/myregistration/'+${reg.getCid()}}"
+                 class="snap-start shrink-0">
+                <img src="https://anhcocvang.com/static/media/MAD101.20b9f72d53ca43e48a53.png"
+                     alt="course" class="rounded-xl mb-2 w-80">
+                <h3 class="font-bold text-lg w-80" th:text="${reg.getSubName()}"></h3>
+              </a>
+            </li>
+          </ul>
+
+          <button type="button" id="scroll-left-1"
+                  class="absolute top-1/2 left-0 -translate-y-1/2 w-10 h-10 rounded-full bg-neutral-100">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button type="button" id="scroll-right-1"
+                  class="absolute top-1/2 right-0 -translate-y-1/2 w-10 h-10 rounded-full bg-neutral-100">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      <div class="px-16 py-8">
+        <div class="relative mb-8 overflow-auto">
+          <h1 class="text-2xl font-bold capitalize mb-6">Other courses</h1>
+          <ul id="other-courses" class="flex snap-x gap-4 w-full overflow-x-hidden">
+            <li th:each="reg:${regis}" th:if="${reg.getStatus() == 'pending'}">
+              <a th:href="@{'/user/myregistration/'+${reg.getCid()}}">
+                <img src="https://anhcocvang.com/static/media/MAD101.20b9f72d53ca43e48a53.png"
+                     alt="course"
+                     class="rounded-xl mb-2 w-80">
+                <h3 class="font-bold text-lg w-80" th:text="${reg.getSubName()}"></h3>
+              </a>
+            </li>
+          </ul>
+          <button type="button" id="scroll-left-2"
+                  class="absolute top-1/2 left-0 -translate-y-1/2 w-10 h-10 rounded-full bg-neutral-100">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button type="button" id="scroll-right-2"
+                  class="absolute top-1/2 right-0 -translate-y-1/2 w-10 h-10 rounded-full bg-neutral-100">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<div th:insert="components/footer"></div>
+<script>
+  const categoriesBtn = document.getElementById('categories-btn');
+  const categoriesIcon = categoriesBtn.querySelector('span');
+  const categoriesList = document.getElementById('categories-list');
+  categoriesBtn.onclick = function () {
+    categoriesIcon.classList.toggle('rotate-90');
+    categoriesList.classList.toggle('hidden');
+  }
+  const scrollRight1 = document.getElementById('scroll-right-1');
+  const scrollLeft1 = document.getElementById('scroll-left-1');
+  const scrollRight2 = document.getElementById('scroll-right-2');
+  const scrollLeft2 = document.getElementById('scroll-left-2');
+
+  scrollLeft1.onclick = () => scroll('left', document.getElementById('courses-purchased'));
+  scrollRight1.onclick = () => scroll('right', document.getElementById('courses-purchased'));
+  scrollLeft2.onclick = () => scroll('left', document.getElementById('other-courses'));
+  scrollRight2.onclick = () => scroll('right', document.getElementById('other-courses'));
+
+  const scroll = (dir, list) => {
+    if (dir === 'right') {
+      list.scrollBy({
+        left: 300,
+        behavior: 'smooth'
+      });
+    } else {
+      list.scrollBy({
+        left: -300,
+        behavior: 'smooth'
+      });
+    }
+  }
+</script>
+</body>
+</html>

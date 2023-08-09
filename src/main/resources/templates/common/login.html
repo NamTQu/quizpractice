@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">  
+        <title>IQuizz - Login</title>
+        <link rel="stylesheet" th:href="@{/css/common/login.css}"/>      
+    </head>
+    <body>
+        <div class="container">
+            <h1>Login to <span style="font-weight: bold;">IQuizz</span></h1>
+
+            <form th:action="@{/login}" method="post">
+                <div>
+                    <p>Email:</p>
+                    <input type="text" name="email" required>
+                </div>
+                <div>
+                    <p>Password:</p>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="button-container">
+                    <input type="submit" value="Login" class="login-button" />
+                </div>
+                <h1 th:if="${session.error eq 'InvalidCredentials'}">Invalid password or email</h1>
+                <h1 th:if="${session.error eq 'AccountNotVerified'}">Account is not verified</h1>
+                <h1 th:if="${session.error eq 'UnknownError'}">Errors have occurred</h1>
+                <div class="button-container">
+                    <a class="forgot-password-link" href="/home">Return Home Page</a>
+                    <a class="forgot-password-link" th:href="@{/forgot_password}">Forgot password?</a>
+                </div>
+            </form>
+
+            <div class="signup-link">
+                Don't have an account? <a th:href="@{/register}">Sign up now</a>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/components/header_logged_in_style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="text/javascript" src="/js/components/header_logged_in.js"></script>
+</head>
+
+<body>
+<header style="font-size:14px;">
+    <div class="navbar1">
+        <div class="logo">
+            <a href="/home">
+                <img style="margin-top: 0;" src="/image/iquizz-text_logo.png" alt="..."/>
+            </a>
+        </div>
+        <div class="navbar__content">
+            <div class="group">
+                <ul class="navigation">
+                    <li>
+                        <a class="homepage" th:href="@{/home}">
+                            <span class="navbar-item-icon"><ion-icon name="home"></ion-icon></span>
+                            <span class="navbar-item-text">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="subjects-list" id="subject" href="/subjects/subjects-list">
+                            <span class="navbar-item-icon"><ion-icon name="book"></ion-icon></span>
+                            <span class="navbar-item-text">Subjects</span>
+                        </a>
+                    </li>
+                    <th:block th:if="${userSession.role.id == 5}">
+                        <li>
+                            <a id="blog" class="blogs-list" th:href="@{/blog/all}">
+                                <span class="navbar-item-icon"><ion-icon name="earth"></ion-icon></span>
+                                <span class="navbar-item-text">Blog</span>
+                            </a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${userSession.role.id == 4}">
+                        <li>
+                            <a id="blog" th:href="@{/marketing/blog/blogs-list}">
+                                <span class="navbar-item-icon"><ion-icon name="earth"></ion-icon></span>
+                                <span class="navbar-item-text">Blog</span>
+                            </a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${userSession.role.id == 1 || userSession.role.id == 2 || userSession.role.id == 5}">
+                        <li>
+                            <a class="my-registration" th:href="@{/user/myregistration}">
+                                <span class="navbar-item-icon"><ion-icon name="school"></ion-icon></span>
+                                <span class="navbar-item-text">My Registrations</span>
+                            </a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${userSession.role.id == 1 || userSession.role.id == 2 || userSession.role.id == 5}">
+                        <li>
+                            <a class="practice-list" th:href="@{/user/practice-list}">
+                                <span class="navbar-item-icon"><ion-icon name="bookmarks"></ion-icon></span>
+                                <span class="navbar-item-text">Practices List</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="practice-list" th:href="@{/user/simulation-exam}">
+                                <span class="navbar-item-icon"><ion-icon name="bookmarks"></ion-icon></span>
+                                <span class="navbar-item-text">Simulation Exam</span>
+                            </a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${userSession.role.id == 1 || userSession.role.id == 2}">
+                        <li>
+                            <a class="practice-list" th:href="@{/testingcontent/quizzeslist}">
+                                <span class="navbar-item-icon"><ion-icon name="bookmarks"></ion-icon></span>
+                                <span class="navbar-item-text">Quizzes List</span>
+                            </a>
+                        </li>
+                    </th:block>
+                    <th:block th:if="${userSession.role.id == 4}">
+                        <li>
+                            <a id="slider" href="/marketing/slider/sliders-list">
+                                <span class="navbar-item-icon"><ion-icon name="documents"></ion-icon></span>
+                                <span class="navbar-item-text">Slider</span>
+                            </a>
+                        </li>
+                    </th:block>
+
+                </ul>
+            </div>
+
+            <div class="action-btn">
+
+                <div class="action">
+                    <div class="profile" onclick="profileToggle()">
+                        <img src="/image/Avatar.jpg" alt="">
+                    </div>
+                    <div class="menu">
+                        <h3 th:text="${userSession.fullName}"></h3>
+                        <ul class="dropdown1">
+                            <th:block th:if="${userSession.role.id != 6}">
+                                <li style="width: 100%; text-align: center; padding-bottom: 0; font-weight: 500;">
+                                    <span style="width: 100%; text-align: center;" th:text="'Role: ' + ${userSession.role.name}"></span>
+                                </li>
+                            </th:block>
+                            <li>
+                                <a th:href="@{'/profile?userid=' + ${userSession.id}}">
+                                    <span><ion-icon name="person"></ion-icon></span>
+                                    <span>My Profile</span> 
+                                </a>
+                            </li>
+                            <th:block th:if="${userSession.role.id == 1}">
+                                <li>
+                                    <a href="/admin/subjects-list">
+                                        <span><ion-icon name="layers-outline"></ion-icon></span>
+                                        <span>Manage Subjects</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/user-list">
+                                        <span><ion-icon name="layers-outline"></ion-icon></span>
+                                        <span>Manage Users</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/settings">
+                                        <span><ion-icon name="layers-outline"></ion-icon></span>
+                                        <span>Manage Settings</span>
+                                    </a>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${userSession.role.id == 2}">
+                                <li>
+                                    <a href="/expert/subjects-list">
+                                        <span><ion-icon name="layers-outline"></ion-icon></span>
+                                        <span>Manage Subjects</span>
+                                    </a>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${userSession.role.id == 1 || userSession.role.id == 2}">
+                                <li>
+                                    <a href="/testingcontent/questionList">
+                                        <span><ion-icon name="layers-outline"></ion-icon></span>
+                                        <span>Manage Questions</span>
+                                    </a>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${userSession.role.id == 3}">
+                                <li>
+                                    <a href="/sale/registrations-list">
+                                        <span><ion-icon name="layers-outline"></ion-icon></span>
+                                        <span>Manage Registrations</span>
+                                    </a>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${userSession.role.id == 1 || userSession.role.id == 3 || userSession.role.id == 4 || userSession.role.id == 3}">
+                                <li>
+                                    <a href="/marketing/dashboard">
+                                        <span><ion-icon name="apps-outline"></ion-icon></span>
+                                        <span>Dashboard</span>
+                                    </a>
+                                </li>
+                            </th:block>
+                            <li>
+                                <a th:href="@{'/logout'}">
+                                    <span><ion-icon name="log-out-outline"></ion-icon></span>
+                                    <span>Logout</span> 
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <!-- <a href="register">
+                    <span class="navbar-item-icon"><ion-icon name="log-out-outline"></ion-icon></span>
+                    <span class="navbar-item-text">Logout</span>
+                </a> -->
+            </div>
+        </div>
+        <ion-icon name="menu-outline" class="menuToggle"></ion-icon>
+    </div>
+</header>
+</body>
+
+</html>
