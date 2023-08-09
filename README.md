@@ -1,7 +1,7 @@
 # quizpractice
  SOME GUIDES TO RUN THE PROJECT " QUIZ PRACTICE SYSTEM "
 -          clone or download the project to your computer
--          extract the ZIp file if your download the project
+-          extract the ZIP file if your download the project
 -          open the project by Apache Netbean or IntelliJ IDEA
   PROJECT CONFIGURATION:
 -          Create database name iquiz in MySQL.
